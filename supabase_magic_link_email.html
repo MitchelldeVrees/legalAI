@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LegalAI Magic Link</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f5f1eb;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        color: #0b0f14;
+      }
+      .wrap {
+        padding: 32px 16px 48px;
+      }
+      .card {
+        max-width: 620px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid rgba(30, 42, 54, 0.12);
+        box-shadow: 0 24px 48px rgba(30, 42, 54, 0.12);
+        overflow: hidden;
+      }
+      .header {
+        padding: 28px 32px 12px;
+        background: linear-gradient(135deg, #fbf7f1 0%, #f0e9e1 100%);
+      }
+      .logo {
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 14px;
+        color: #1e2a36;
+      }
+      h1 {
+        font-family: "Playfair Display", "Times New Roman", serif;
+        font-size: 28px;
+        margin: 14px 0 8px;
+      }
+      .content {
+        padding: 12px 32px 32px;
+        line-height: 1.6;
+      }
+      .cta {
+        display: inline-block;
+        margin: 20px 0 12px;
+        padding: 12px 22px;
+        background: #d85b2f;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+      .muted {
+        color: #5b6570;
+        font-size: 13px;
+      }
+      .divider {
+        height: 1px;
+        background: rgba(30, 42, 54, 0.1);
+        margin: 20px 0;
+      }
+      .footer {
+        padding: 0 32px 28px;
+        font-size: 12px;
+        color: #6a747e;
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <div class="header">
+          <div class="logo">LegalAI</div>
+          <h1>Je magische link staat klaar</h1>
+          <p class="muted">Log veilig in om verder te gaan met je workspace.</p>
+        </div>
+        <div class="content">
+          <p>
+            Klik op de knop hieronder om direct in te loggen. De link is
+            eenmalig en verloopt automatisch.
+          </p>
+          <a class="cta" href="{{ .ConfirmationURL }}">Inloggen</a>
+          <p class="muted">
+            Werkt de knop niet? Kopieer en plak deze link in je browser:
+            <br />
+            <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+          </p>
+          <div class="divider"></div>
+          <p class="muted">
+            Heb je dit niet aangevraagd? Negeer deze e-mail.
+          </p>
+        </div>
+        <div class="footer">
+          LegalAI · Vertrouwd door litigation, M&amp;A en compliance teams
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

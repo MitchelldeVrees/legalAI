@@ -40,6 +40,34 @@ export default function SignupPage() {
         throw new Error("Supabase omgevingsvariabelen ontbreken.");
       }
 
+      const { data: existingAccount, error: existingError } = await supabase
+        .from("accounts")
+        .select("id")
+        .eq("email", form.email)
+        .maybeSingle();
+
+      if (existingError) {
+        throw existingError;
+      }
+
+      if (existingAccount) {
+        if (typeof window !== "undefined") {
+          const redirectTo = `${window.location.origin}/dashboard`;
+          const { error: authError } = await supabase.auth.signInWithOtp({
+            email: form.email,
+            options: { emailRedirectTo: redirectTo }
+          });
+
+          if (authError) {
+            throw authError;
+          }
+        }
+
+        setForm(initialState);
+        router.push("/login?sent=1");
+        return;
+      }
+
       const { data: firmData, error: firmError } = await supabase
         .from("firms")
         .insert({
@@ -62,11 +90,41 @@ export default function SignupPage() {
       });
 
       if (accountError) {
+        if (accountError.code === "23505") {
+          if (typeof window !== "undefined") {
+            const redirectTo = `${window.location.origin}/dashboard`;
+            const { error: authError } = await supabase.auth.signInWithOtp({
+              email: form.email,
+              options: { emailRedirectTo: redirectTo }
+            });
+
+            if (authError) {
+              throw authError;
+            }
+          }
+
+          setForm(initialState);
+          router.push("/login?sent=1");
+          return;
+        }
+
         throw accountError;
       }
 
+      if (typeof window !== "undefined") {
+        const redirectTo = `${window.location.origin}/dashboard`;
+        const { error: authError } = await supabase.auth.signInWithOtp({
+          email: form.email,
+          options: { emailRedirectTo: redirectTo }
+        });
+
+        if (authError) {
+          throw authError;
+        }
+      }
+
       setForm(initialState);
-      router.push("/dashboard");
+      router.push("/login?sent=1");
     } catch (error) {
       setStatus({
         loading: false,

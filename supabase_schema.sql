@@ -24,6 +24,8 @@ drop policy if exists "public insert firms" on public.firms;
 drop policy if exists "public insert accounts" on public.accounts;
 drop policy if exists "public select firms" on public.firms;
 drop policy if exists "public select accounts" on public.accounts;
+drop policy if exists "public delete firms" on public.firms;
+drop policy if exists "public delete accounts" on public.accounts;
 
 create policy "public insert firms"
   on public.firms
@@ -51,3 +53,18 @@ create policy "public select accounts"
 
 grant insert, select on public.firms to anon, authenticated;
 grant insert, select on public.accounts to anon, authenticated;
+
+create policy "public delete firms"
+  on public.firms
+  for delete
+  to anon, authenticated
+  using (true);
+
+create policy "public delete accounts"
+  on public.accounts
+  for delete
+  to anon, authenticated
+  using (true);
+
+grant delete on public.firms to anon, authenticated;
+grant delete on public.accounts to anon, authenticated;

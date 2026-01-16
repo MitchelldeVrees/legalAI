@@ -1,20 +1,53 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <main className="page">
       <div className="halo" aria-hidden="true" />
       <nav className="nav">
         <div className="logo">LegalAI</div>
+        <button
+          className="menu-toggle"
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+        >
+          Menu
+        </button>
         <div className="nav-links">
           <a href="#capabilities">Mogelijkheden</a>
           <a href="#workflow">Werkwijze</a>
           <a href="#insights">Inzichten</a>
+          <Link className="ghost" href="/login">
+            Inloggen
+          </Link>
           <Link className="cta" href="/signup">
             Toegang aanvragen
           </Link>
         </div>
       </nav>
+      <div id="mobile-nav" className={`mobile-nav ${menuOpen ? "open" : ""}`}>
+        <a href="#capabilities" onClick={() => setMenuOpen(false)}>
+          Mogelijkheden
+        </a>
+        <a href="#workflow" onClick={() => setMenuOpen(false)}>
+          Werkwijze
+        </a>
+        <a href="#insights" onClick={() => setMenuOpen(false)}>
+          Inzichten
+        </a>
+        <Link className="ghost" href="/login" onClick={() => setMenuOpen(false)}>
+          Inloggen
+        </Link>
+        <Link className="cta" href="/signup" onClick={() => setMenuOpen(false)}>
+          Toegang aanvragen
+        </Link>
+      </div>
 
       <section className="hero">
         <div className="hero-copy">

@@ -78,6 +78,33 @@ label.cta {
   font-size: 14px;
 }
 
+.menu-toggle {
+  display: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 15, 20, 0.2);
+  color: var(--steel);
+  font-weight: 600;
+}
+
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0 28px;
+}
+
+.mobile-nav a,
+.mobile-nav .cta,
+.mobile-nav .ghost {
+  width: 100%;
+  text-align: center;
+}
+
+.mobile-nav.open {
+  display: flex;
+}
+
 .cta {
   background: var(--accent);
   color: white;
@@ -335,6 +362,7 @@ label.cta {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(30, 42, 54, 0.12);
   box-shadow: 0 12px 30px rgba(30, 42, 54, 0.1);
+  position: relative;
 }
 
 .account-chip p {
@@ -364,6 +392,51 @@ label.cta {
     radial-gradient(circle at 30% 30%, #f0d6c7, transparent 55%),
     radial-gradient(circle at 70% 40%, #c9d6e4, transparent 50%),
     #b3b9c2;
+}
+
+.avatar-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.avatar-button:focus-visible {
+  outline: 2px solid rgba(216, 91, 47, 0.5);
+  outline-offset: 3px;
+}
+
+.account-menu {
+  position: absolute;
+  right: 12px;
+  top: calc(100% + 10px);
+  background: white;
+  border-radius: 14px;
+  border: 1px solid rgba(30, 42, 54, 0.12);
+  box-shadow: 0 18px 40px rgba(30, 42, 54, 0.18);
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+  min-width: 180px;
+  z-index: 10;
+}
+
+.account-menu button {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+}
+
+.account-menu button:hover {
+  background: rgba(30, 42, 54, 0.08);
+}
+
+.account-menu .danger {
+  color: #a02020;
 }
 
 .dashboard-body {
@@ -484,6 +557,14 @@ label.cta {
   font-size: 14px;
 }
 
+.form-success {
+  background: rgba(30, 120, 75, 0.12);
+  color: #1a5a39;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
 .dashboard-card {
   text-align: center;
 }
@@ -560,6 +641,21 @@ label.cta {
   .dashboard-body {
     grid-template-columns: 1fr;
   }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .account-chip {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .account-menu {
+    right: 0;
+    left: 0;
+  }
 }
 
 @keyframes float {
@@ -600,6 +696,12 @@ label.cta {
     display: none;
   }
 
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .cta-band {
     flex-direction: column;
     align-items: flex-start;
@@ -611,11 +713,39 @@ label.cta {
     padding: 24px 6vw 60px;
   }
 
+  .form-card {
+    padding: 24px;
+  }
+
+  .signup-form {
+    gap: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions .cta,
+  .form-actions .ghost {
+    width: 100%;
+    text-align: center;
+  }
+
   .hero {
     padding-bottom: 50px;
   }
 
   .hero-copy h1 {
     font-size: 2.4rem;
+  }
+
+  .cta-band {
+    padding: 24px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
