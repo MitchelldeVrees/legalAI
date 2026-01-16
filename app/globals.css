@@ -353,6 +353,12 @@ label.cta {
   gap: 20px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .account-chip {
   display: flex;
   align-items: center;

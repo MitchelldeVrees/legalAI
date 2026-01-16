@@ -51,24 +51,25 @@ export default function Home() {
 
       <section className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">Gemaakt voor teams met hoge inzet</p>
+          <p className="eyebrow">Voor juridische teams</p>
           <h1>
-            Opstellen. Beoordelen. Verdedigen.
-            <span> Juridisch onderzoek op proces-tempo.</span>
+            Contracten sneller doorgronden.
+            <span> Duidelijke inzichten in minuten.</span>
           </h1>
           <p className="lead">
-            LegalAI combineert zoekwerk op citatieniveau, argumentmapping en
-            directe redlining in een werkruimte. Ga van intake naar strategie
-            zonder het herkomstspoor te verliezen waar je kantoor op vertrouwt.
+            Upload een document en krijg direct een helder, gestructureerd
+            overzicht van risico’s, kernbepalingen en vragen voor de behandelaar.
           </p>
           <div className="hero-actions">
             <button className="cta">Plan een demo</button>
-            <button className="ghost">Bekijk voorbeeld</button>
+            <Link className="ghost" href="/demo">
+              Bekijk voorbeeld
+            </Link>
           </div>
           <div className="meta">
-            <span>ISO 27001 afgestemd</span>
-            <span>On-premise gereed</span>
-            <span>VS + EU jurisdicties</span>
+            <span>AVG-ready</span>
+            <span>Magic link login</span>
+            <span>Nederlandse servers</span>
           </div>
         </div>
 
@@ -79,16 +80,16 @@ export default function Home() {
           </div>
           <div className="card-body">
             <div className="card-block">
-              <h3>Argumentenkaart</h3>
-              <p>Automatisch gelinkte precedentclusters met scores.</p>
+              <h3>Samenvatting</h3>
+              <p>8–12 bullets die meteen duidelijk maken wat telt.</p>
             </div>
             <div className="card-block">
-              <h3>Redline-assistent</h3>
-              <p>Markeert risicoclausules en stelt verdedigbare herschrijvingen voor.</p>
+              <h3>Risico’s</h3>
+              <p>Conservatieve signalen zonder overdreven claims.</p>
             </div>
             <div className="card-block">
-              <h3>Rechteranalyse</h3>
-              <p>Volg uitkomsten van moties over 10 jaar aan indieningen.</p>
+              <h3>Vragenlijst</h3>
+              <p>Lawyer-smart vragen om snel te beoordelen.</p>
             </div>
           </div>
           <div className="card-footer">
@@ -100,69 +101,69 @@ export default function Home() {
 
       <section id="capabilities" className="grid">
         <div className="grid-item">
-          <h2>Precisie die je kunt citeren</h2>
+          <h2>Klaar om te bespreken</h2>
           <p>
-            Elke bewering heeft een traceerbare bron. Schakel in een klik
-            tussen AI-synthese en de originele bron.
+            Analyse in duidelijke secties: Documentprofiel, Samenvatting,
+            Kernbepalingen, Risico’s en Vragen.
           </p>
         </div>
         <div className="grid-item">
-          <h3>Clausule-intelligentie</h3>
-          <p>Risico-heatmaps op basis van de precedentbibliotheek van je kantoor.</p>
+          <h3>Snelle intake</h3>
+          <p>Upload en ontvang in één flow het volledige overzicht.</p>
         </div>
         <div className="grid-item">
-          <h3>Procesradar</h3>
-          <p>Signaleer zwakke plekken voordat de wederpartij dat doet.</p>
+          <h3>Conservatief</h3>
+          <p>Geen harde claims zonder tekstuele onderbouwing.</p>
         </div>
         <div className="grid-item">
-          <h3>Onderhandelingsmotor</h3>
-          <p>Scenario-playbooks voor M&amp;A-, privacy- en employment-teams.</p>
+          <h3>Direct deelbaar</h3>
+          <p>Markdown-rapport dat je zo kunt doorsturen.</p>
         </div>
       </section>
 
       <section id="workflow" className="workflow">
         <div>
           <p className="eyebrow">Werkwijze</p>
-          <h2>Van intake naar strategie in drie stappen.</h2>
+          <h2>Van upload naar inzicht in drie stappen.</h2>
         </div>
         <div className="steps">
           <div className="step">
             <span>01</span>
-            <h3>Uploaden en normaliseren</h3>
-            <p>Neem contracten, jurisprudentie en discovery op in een kaart.</p>
+            <h3>Upload document</h3>
+            <p>PDF, DOCX of tekstbestand.</p>
           </div>
           <div className="step">
             <span>02</span>
-            <h3>Onderzoek het dossier</h3>
-            <p>Vraag, filter en vergelijk met uitlegbare redeneerpaden.</p>
+            <h3>Analyseer</h3>
+            <p>Systeem maakt een gestructureerd rapport.</p>
           </div>
           <div className="step">
             <span>03</span>
-            <h3>Publiceer met vertrouwen</h3>
-            <p>Genereer pleitnota's of redlines met geverifieerde citaties.</p>
+            <h3>Beoordeel</h3>
+            <p>Gebruik de vragenlijst voor snelle review.</p>
           </div>
         </div>
       </section>
 
       <section id="insights" className="insights">
         <div className="insight-card">
-          <h3>92%</h3>
-          <p>Minder tijd voor de eerste contractreview.</p>
+          <h3>1 upload</h3>
+          <p>Alles in één overzicht.</p>
         </div>
         <div className="insight-card">
-          <h3>4.6x</h3>
-          <p>Snellere precedentvinding over meerdere jurisdicties.</p>
+          <h3>6 secties</h3>
+          <p>Consistente structuur per document.</p>
         </div>
         <div className="insight-card">
-          <h3>48 hrs</h3>
-          <p>Gemiddelde doorlooptijd voor complexe summary judgment-concepten.</p>
+          <h3>NL output</h3>
+          <p>Duidelijk en direct toepasbaar.</p>
         </div>
       </section>
 
       <section className="cta-band">
         <div>
-          <h2>Klaar om je volgende pleitnota zichzelf te zien samenstellen?</h2>
-          <p>We lopen je huidige werkwijze door en bouwen in 14 dagen een pilot.</p>
+          <h2>Wil je dit in je eigen workflow testen?</h2>
+          <p>Start met een document en ontvang direct het rapport.</p>
         </div>
         <button className="cta">Start pilot</button>
       </section>
@@ -173,9 +174,9 @@ export default function Home() {
           <p>Vertrouwd door leiders in litigation, M&amp;A en compliance.</p>
         </div>
         <div className="footer-links">
-          <span>Beveiliging</span>
+          <Link href="/beveiliging">Beveiliging</Link>
           <span>Voorwaarden</span>
-          <span>Vacatures</span>
+          <Link href="/vacatures">Vacatures</Link>
         </div>
       </footer>
     </main>
