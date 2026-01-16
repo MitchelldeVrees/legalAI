@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 );
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -109,5 +109,25 @@ export default function LoginPage() {
         </form>
       </section>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="page signup-page">
+          <div className="halo" aria-hidden="true" />
+          <section className="form-card">
+            <div className="form-header">
+              <p className="eyebrow">Inloggen</p>
+              <h1>Even laden...</h1>
+            </div>
+          </section>
+        </main>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
