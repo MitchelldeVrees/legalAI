@@ -120,6 +120,25 @@ label.cta {
   box-shadow: 0 16px 30px rgba(216, 91, 47, 0.3);
 }
 
+.cta.is-loading {
+  position: relative;
+  padding-right: 46px;
+}
+
+.cta.is-loading::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
 .ghost {
   padding: 12px 20px;
   border-radius: 999px;
@@ -337,6 +356,182 @@ label.cta {
   align-items: center;
   justify-content: center;
   padding: 60px 6vw 80px;
+}
+
+.search-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 6vw 80px;
+}
+
+.search-card {
+  width: min(760px, 100%);
+  display: grid;
+  gap: 22px;
+}
+
+.search-form {
+  display: grid;
+  gap: 14px;
+}
+
+.search-label {
+  font-size: 14px;
+  color: #3b4752;
+}
+
+.search-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 240px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(30, 42, 54, 0.2);
+  font-size: 15px;
+  background: #faf8f4;
+}
+
+.search-input:focus {
+  outline: 2px solid rgba(216, 91, 47, 0.35);
+  border-color: rgba(216, 91, 47, 0.5);
+}
+
+.search-note {
+  margin: 0;
+  font-size: 13px;
+  color: #5a6570;
+}
+
+.results-card {
+  display: grid;
+  gap: 18px;
+}
+
+.results-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.results-list {
+  display: grid;
+  gap: 16px;
+}
+
+.result-item {
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(30, 42, 54, 0.12);
+  background: rgba(255, 255, 255, 0.85);
+  display: grid;
+  gap: 8px;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.result-meta {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #5a6570;
+}
+
+.result-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(30, 42, 54, 0.4);
+  text-underline-offset: 3px;
+}
+
+.score-chip {
+  font-size: 12px;
+  color: #8a3218;
+  background: rgba(216, 91, 47, 0.12);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 91, 47, 0.25);
+  white-space: nowrap;
+}
+
+.result-snippet {
+  margin: 0;
+  font-size: 14px;
+  color: #1f2a33;
+}
+
+.answer-output {
+  gap: 10px;
+}
+
+.detail-card {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #5a6570;
+}
+
+.detail-content {
+  display: grid;
+  gap: 14px;
+}
+
+.detail-sections {
+  display: grid;
+  gap: 12px;
+  line-height: 1.6;
+  color: #1f2a33;
+}
+
+.uitspraak-html {
+  display: grid;
+  gap: 12px;
+  line-height: 1.6;
+  color: #1f2a33;
+}
+
+.uitspraak-html p {
+  margin: 0 0 12px;
+}
+
+.uitspraak-html .uitspraak-info,
+.uitspraak-html .uitspraak-inhoud,
+.uitspraak-html .uitspraak-tekst {
+  display: grid;
+  gap: 8px;
+}
+
+.uitspraak-html .uitspraak-root {
+  display: grid;
+  gap: 16px;
+}
+
+.xml-viewer {
+  white-space: pre-wrap;
+  background: #faf8f4;
+  border-radius: 16px;
+  border: 1px solid rgba(30, 42, 54, 0.12);
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1f2a33;
+  overflow: auto;
+  max-height: 480px;
 }
 
 .dashboard-shell {
@@ -697,6 +892,12 @@ label.cta {
   }
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 900px) {
   .nav-links {
     display: none;
@@ -734,6 +935,16 @@ label.cta {
 
   .form-actions .cta,
   .form-actions .ghost {
+    width: 100%;
+    text-align: center;
+  }
+
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-row .cta {
     width: 100%;
     text-align: center;
   }

@@ -45,7 +45,7 @@ function LoginContent() {
       }
 
       if (typeof window !== "undefined") {
-        const redirectTo = `${window.location.origin}/dashboard`;
+        const redirectTo = `${window.location.origin}/auth/callback`;
         const { error: authError } = await supabase.auth.signInWithOtp({
           email,
           options: { emailRedirectTo: redirectTo }
