@@ -290,7 +290,8 @@ export default function Home() {
         </div>
         <div className="footer-links">
           <Link href="/beveiliging">Beveiliging</Link>
-          <span>Voorwaarden</span>
+          <Link href="/voorwaarden">Voorwaarden</Link>
+          <Link href="/privacyverklaring">Privacy</Link>
           <Link href="/vacatures">Vacatures</Link>
         </div>
       </footer>
