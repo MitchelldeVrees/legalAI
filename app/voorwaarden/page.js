@@ -328,9 +328,6 @@ export default function VoorwaardenPage() {
           <Link className="ghost" href="/">
             Terug naar home
           </Link>
-          <Link className="cta" href="/signup">
-            Toegang aanvragen
-          </Link>
         </div>
       </section>
     </main>

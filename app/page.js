@@ -28,7 +28,7 @@ export default function Home() {
             Inloggen
           </Link>
           <Link className="cta" href="/signup">
-            Toegang aanvragen
+Maak gratis een account
           </Link>
         </div>
       </nav>
@@ -67,7 +67,7 @@ export default function Home() {
           </p>
           <div className="hero-actions">
             <Link className="cta" href="/signup">
-              Plan een demo
+              Maak gratis een account
             </Link>
             <Link className="ghost" href="/demo">
               Bekijk voorbeeld
