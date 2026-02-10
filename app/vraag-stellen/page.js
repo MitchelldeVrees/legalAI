@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import DashboardShell from "../components/DashboardShell";
 
 export default function VraagStellenPage() {
@@ -90,6 +91,7 @@ export default function VraagStellenPage() {
       title="Vraag stellen"
       sidebarItems={[
         { label: "Contract reader", href: "/dashboard" },
+        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", href: "/jurispudentie-search" },
         { label: "Vraag stellen", active: true }
       ]}
@@ -163,9 +165,9 @@ export default function VraagStellenPage() {
                   <div className="result-header">
                     <div>
                       {ecliHref ? (
-                        <a className="result-link" href={ecliHref}>
+                        <Link className="result-link" href={ecliHref}>
                           <strong>{result.ecli}</strong>
-                        </a>
+                        </Link>
                       ) : (
                         <strong>Onbekende ECLI</strong>
                       )}

@@ -59,6 +59,7 @@ export default function DashboardHome() {
       title="Welkom terug"
       sidebarItems={[
         { label: "Contract reader", active: true },
+        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", href: "/jurispudentie-search" },
         { label: "Vraag stellen", href: "/vraag-stellen" }
       ]}

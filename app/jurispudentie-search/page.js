@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import DashboardShell from "../components/DashboardShell";
 
 export default function JurispudentieSearchPage() {
@@ -99,6 +100,7 @@ export default function JurispudentieSearchPage() {
       title="Jurisprudentie search"
       sidebarItems={[
         { label: "Contract reader", href: "/dashboard" },
+        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", active: true },
         { label: "Vraag stellen", href: "/vraag-stellen" }
       ]}
@@ -168,9 +170,9 @@ export default function JurispudentieSearchPage() {
                     <div className="result-header">
                       <div>
                         {ecliHref ? (
-                          <a className="result-link" href={ecliHref}>
+                          <Link className="result-link" href={ecliHref}>
                             <strong>{result.ecli}</strong>
-                          </a>
+                          </Link>
                         ) : (
                           <strong>Onbekende ECLI</strong>
                         )}
