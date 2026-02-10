@@ -20,26 +20,30 @@ export default function Home() {
           Menu
         </button>
         <div className="nav-links">
-          <a href="#capabilities">Mogelijkheden</a>
+          <a href="#modules">Modules</a>
+          <a href="#examples">Voorbeelden</a>
           <a href="#workflow">Werkwijze</a>
-          <a href="#insights">Inzichten</a>
+          <a href="#trust">Vertrouwen</a>
           <Link className="ghost" href="/login">
             Inloggen
           </Link>
           <Link className="cta" href="/signup">
-            Toegang aanvragen
+Maak gratis een account
           </Link>
         </div>
       </nav>
       <div id="mobile-nav" className={`mobile-nav ${menuOpen ? "open" : ""}`}>
-        <a href="#capabilities" onClick={() => setMenuOpen(false)}>
-          Mogelijkheden
+        <a href="#modules" onClick={() => setMenuOpen(false)}>
+          Modules
+        </a>
+        <a href="#examples" onClick={() => setMenuOpen(false)}>
+          Voorbeelden
         </a>
         <a href="#workflow" onClick={() => setMenuOpen(false)}>
           Werkwijze
         </a>
-        <a href="#insights" onClick={() => setMenuOpen(false)}>
-          Inzichten
+        <a href="#trust" onClick={() => setMenuOpen(false)}>
+          Vertrouwen
         </a>
         <Link className="ghost" href="/login" onClick={() => setMenuOpen(false)}>
           Inloggen
@@ -51,121 +55,232 @@ export default function Home() {
 
       <section className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">Voor juridische teams</p>
+          <p className="eyebrow">Voor juridische teams in Nederland</p>
           <h1>
-            Contracten sneller doorgronden.
-            <span> Duidelijke inzichten in minuten.</span>
+            Contracten, jurisprudentie en vragen in één werkstroom.
+            <span> Altijd met bronverwijzing.</span>
           </h1>
           <p className="lead">
-            Upload een document en krijg direct een helder, gestructureerd
-            overzicht van risico’s, kernbepalingen en vragen voor de behandelaar.
+            LegalAI leest contracten, zoekt relevante uitspraken en formuleert
+            antwoorden met ECLI-verwijzingen. Je krijgt een strak rapport met
+            samenvatting, kernbepalingen, risico’s en gerichte vragen.
           </p>
           <div className="hero-actions">
-            <button className="cta">Plan een demo</button>
+            <Link className="cta" href="/signup">
+              Maak gratis een account
+            </Link>
             <Link className="ghost" href="/demo">
               Bekijk voorbeeld
             </Link>
           </div>
           <div className="meta">
             <span>AVG-ready</span>
-            <span>Magic link login</span>
+            <span>ECLI-citaties</span>
             <span>Nederlandse servers</span>
           </div>
         </div>
 
         <div className="hero-card">
           <div className="card-header">
-            <span>Actieve zaak</span>
-            <strong>Clarke v. Stonebridge</strong>
+            <span>Live workflow</span>
+            <strong>Van intake tot antwoord</strong>
           </div>
           <div className="card-body">
             <div className="card-block">
-              <h3>Samenvatting</h3>
-              <p>8–12 bullets die meteen duidelijk maken wat telt.</p>
+              <h3>Contract reader</h3>
+              <p>Samenvatting, kernbepalingen en risico’s.</p>
             </div>
             <div className="card-block">
-              <h3>Risico’s</h3>
-              <p>Conservatieve signalen zonder overdreven claims.</p>
+              <h3>Jurisprudentie search</h3>
+              <p>Zoek ECLI’s met direct bruikbare snippets.</p>
             </div>
             <div className="card-block">
-              <h3>Vragenlijst</h3>
-              <p>Lawyer-smart vragen om snel te beoordelen.</p>
+              <h3>Vraag stellen</h3>
+              <p>Antwoord met concrete ECLI-verwijzingen.</p>
             </div>
           </div>
           <div className="card-footer">
-            <span>Live briefing</span>
+            <span>Nieuwe inzichten binnen minuten</span>
             <span className="pulse" aria-hidden="true" />
           </div>
         </div>
       </section>
 
-      <section id="capabilities" className="grid">
-        <div className="grid-item">
-          <h2>Klaar om te bespreken</h2>
-          <p>
-            Analyse in duidelijke secties: Documentprofiel, Samenvatting,
-            Kernbepalingen, Risico’s en Vragen.
+      <section id="modules" className="modules">
+        <div className="section-header">
+          <p className="eyebrow">Wat je krijgt</p>
+          <h2>Drie modules, één dossier.</h2>
+          <p className="lead">
+            Gebruik alleen wat je nodig hebt of combineer alles tot één
+            onderbouwd advies.
           </p>
         </div>
-        <div className="grid-item">
-          <h3>Snelle intake</h3>
-          <p>Upload en ontvang in één flow het volledige overzicht.</p>
+        <div className="modules-grid">
+          <div className="module-card">
+            <div className="module-title">
+              <span className="tag">Contract reader</span>
+              <h3>Lees en beoordeel contracten in minuten.</h3>
+            </div>
+            <p>
+              Elk document wordt uitgesplitst in vaste secties zodat je niets
+              mist.
+            </p>
+            <ul className="module-list">
+              <li>Documentprofiel met type, partijen en looptijd.</li>
+              <li>Kernbepalingen en afwijkingen op een rij.</li>
+              <li>Risico’s + vragenlijst voor snelle review.</li>
+            </ul>
+          </div>
+          <div className="module-card">
+            <div className="module-title">
+              <span className="tag">Jurisprudentie search</span>
+              <h3>Vind de juiste uitspraken sneller.</h3>
+            </div>
+            <p>
+              Zoek op thema of kwestie en ontvang direct bruikbare ECLI’s.
+            </p>
+            <ul className="module-list">
+              <li>Topresultaten met score en snippet.</li>
+              <li>Snelle doorklik naar de uitspraak.</li>
+              <li>Antwoord genereren op basis van bronnen.</li>
+            </ul>
+          </div>
+          <div className="module-card">
+            <div className="module-title">
+              <span className="tag">Vraag stellen</span>
+              <h3>Krijg een helder antwoord met bron.</h3>
+            </div>
+            <p>
+              Formuleer je juridische vraag en ontvang een beargumenteerde
+              reactie.
+            </p>
+            <ul className="module-list">
+              <li>Antwoord met ECLI-verwijzingen.</li>
+              <li>Onderbouwing met relevante passages.</li>
+              <li>Geschikt voor memo of bespreking.</li>
+            </ul>
+          </div>
         </div>
-        <div className="grid-item">
-          <h3>Conservatief</h3>
-          <p>Geen harde claims zonder tekstuele onderbouwing.</p>
+      </section>
+
+      <section id="examples" className="examples">
+        <div className="section-header">
+          <p className="eyebrow">Voorbeelden</p>
+          <h2>Zo ziet een output eruit in de praktijk.</h2>
+          <p className="lead">
+            Concrete voorbeelden uit contractanalyse en jurisprudentie.
+          </p>
         </div>
-        <div className="grid-item">
-          <h3>Direct deelbaar</h3>
-          <p>Markdown-rapport dat je zo kunt doorsturen.</p>
+        <div className="examples-grid">
+          <div className="example-card">
+            <p className="eyebrow">Contract reader</p>
+            <h3>Huurcontract woonruimte</h3>
+            <div className="example-body">
+              <div className="example-row">
+                <span className="example-label">Risico</span>
+                <p>Minimumduur 24 maanden zonder tussentijdse opzegging.</p>
+              </div>
+              <div className="example-row">
+                <span className="example-label">Vraag</span>
+                <p>Is het gehuurde zelfstandig of onzelfstandig?</p>
+              </div>
+              <div className="example-row">
+                <span className="example-label">Actie</span>
+                <p>Check bijlage energielabel + servicekostenonderbouwing.</p>
+              </div>
+            </div>
+          </div>
+          <div className="example-card">
+            <p className="eyebrow">Jurisprudentie search</p>
+            <h3>Ontslag op staande voet</h3>
+            <div className="example-body">
+              <div className="example-row">
+                <span className="example-label">Top ECLI</span>
+                <p>ECLI:NL:HR:2019:1734 — dringende reden + bewijs.</p>
+              </div>
+              <div className="example-row">
+                <span className="example-label">Snippet</span>
+                <p>Voorafgaande waarschuwingen wogen mee in oordeel.</p>
+              </div>
+              <div className="example-row">
+                <span className="example-label">Gebruik</span>
+                <p>Onderbouwing voor memo of pleitnota.</p>
+              </div>
+            </div>
+          </div>
+          <div className="example-card">
+            <p className="eyebrow">Vraag stellen</p>
+            <h3>Randvoorwaardenkorting</h3>
+            <div className="example-body">
+              <div className="example-row">
+                <span className="example-label">Vraag</span>
+                <p>Mag een randvoorwaardenkorting worden opgelegd?</p>
+              </div>
+              <div className="example-row">
+                <span className="example-label">Antwoord</span>
+                <p>Ja, mits de feiten concreet zijn vastgesteld.</p>
+              </div>
+              <div className="example-row">
+                <span className="example-label">Bron</span>
+                <p>ECLI:NL:CBB:2021:476 en ECLI:NL:CBB:2020:452.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="examples-flow" aria-hidden="true">
+          <span className="flow-dot" />
+          <span className="flow-dot" />
+          <span className="flow-dot" />
         </div>
       </section>
 
       <section id="workflow" className="workflow">
         <div>
           <p className="eyebrow">Werkwijze</p>
-          <h2>Van upload naar inzicht in drie stappen.</h2>
+          <h2>Van vraag naar onderbouwd advies in drie stappen.</h2>
         </div>
         <div className="steps">
           <div className="step">
             <span>01</span>
-            <h3>Upload document</h3>
-            <p>PDF, DOCX of tekstbestand.</p>
+            <h3>Upload of zoek</h3>
+            <p>Contract, dossier of zoekopdracht.</p>
           </div>
           <div className="step">
             <span>02</span>
-            <h3>Analyseer</h3>
-            <p>Systeem maakt een gestructureerd rapport.</p>
+            <h3>Analyseer en vind bronnen</h3>
+            <p>Structuur + ECLI’s met snippets.</p>
           </div>
           <div className="step">
             <span>03</span>
-            <h3>Beoordeel</h3>
-            <p>Gebruik de vragenlijst voor snelle review.</p>
+            <h3>Beoordeel en deel</h3>
+            <p>Rapport en antwoord direct inzetbaar.</p>
           </div>
         </div>
       </section>
 
-      <section id="insights" className="insights">
+      <section id="trust" className="insights trust">
         <div className="insight-card">
-          <h3>1 upload</h3>
-          <p>Alles in één overzicht.</p>
+          <h3>Bronnen</h3>
+          <p>ECLI-verwijzingen bij antwoorden en resultaten.</p>
         </div>
         <div className="insight-card">
-          <h3>6 secties</h3>
-          <p>Consistente structuur per document.</p>
+          <h3>Structuur</h3>
+          <p>Vaste secties per contract, zodat niets verdwijnt.</p>
         </div>
         <div className="insight-card">
-          <h3>NL output</h3>
-          <p>Duidelijk en direct toepasbaar.</p>
+          <h3>Compliance</h3>
+          <p>AVG-ready + Nederlandse servers.</p>
         </div>
       </section>
 
       <section className="cta-band">
         <div>
           <h2>Wil je dit in je eigen workflow testen?</h2>
-          <p>Start met een document en ontvang direct het rapport.</p>
+          <p>Plan een demo of start een pilot met je eigen dossiers.</p>
         </div>
-        <button className="cta">Start pilot</button>
+        <Link className="cta" href="/signup">
+          Start pilot
+        </Link>
       </section>
 
       <footer className="footer">
@@ -175,7 +290,8 @@ export default function Home() {
         </div>
         <div className="footer-links">
           <Link href="/beveiliging">Beveiliging</Link>
-          <span>Voorwaarden</span>
+          <Link href="/voorwaarden">Voorwaarden</Link>
+          <Link href="/privacyverklaring">Privacy</Link>
           <Link href="/vacatures">Vacatures</Link>
         </div>
       </footer>
