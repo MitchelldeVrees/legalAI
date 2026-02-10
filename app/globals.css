@@ -120,6 +120,13 @@ label.cta {
   box-shadow: 0 16px 30px rgba(216, 91, 47, 0.3);
 }
 
+.cta:focus-visible,
+.ghost:focus-visible,
+.text-link:focus-visible {
+  outline: 2px solid rgba(216, 91, 47, 0.55);
+  outline-offset: 3px;
+}
+
 .cta.is-loading {
   position: relative;
   padding-right: 46px;
@@ -144,6 +151,13 @@ label.cta {
   border-radius: 999px;
   border: 1px solid rgba(11, 15, 20, 0.2);
   color: var(--steel);
+  font-weight: 500;
+}
+
+.text-link {
+  color: var(--accent-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
   font-weight: 500;
 }
 
@@ -278,6 +292,18 @@ label.cta {
   padding: 20px 0 70px;
 }
 
+.audience {
+  display: grid;
+  gap: 28px;
+  padding: 12px 0 70px;
+}
+
+.audience-grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
 .modules-grid {
   display: grid;
   gap: 22px;
@@ -406,6 +432,34 @@ label.cta {
   animation-delay: 1.2s;
 }
 
+.comparison-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(30, 42, 54, 0.1);
+  border-radius: 22px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.comparison-card h3 {
+  margin: 0;
+}
+
+.comparison-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.comparison-label {
+  margin: 0 0 10px;
+  color: #8a3218;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
 .grid-item {
   background: rgba(255, 255, 255, 0.8);
   padding: 22px;
@@ -458,7 +512,18 @@ label.cta {
 
 .insight-card h3 {
   margin: 0 0 8px;
-  font-size: 2rem;
+  font-size: 1.4rem;
+}
+
+.insight-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.insight-card a {
+  color: #ffd6c9;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .cta-band {
@@ -470,6 +535,12 @@ label.cta {
   background: white;
   border-radius: 26px;
   box-shadow: 0 20px 50px rgba(30, 42, 54, 0.15);
+}
+
+.cta-band-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .footer {
@@ -686,6 +757,16 @@ label.cta {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+}
+
+.demo-disclaimer {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(216, 91, 47, 0.12);
+  border: 1px solid rgba(216, 91, 47, 0.3);
+  color: #8a3218;
+  font-size: 14px;
 }
 
 .header-actions {
@@ -928,6 +1009,33 @@ label.cta {
   border-color: rgba(216, 91, 47, 0.5);
 }
 
+.signup-form textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(30, 42, 54, 0.2);
+  font-size: 15px;
+  background: #faf8f4;
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+.signup-form textarea:focus {
+  outline: 2px solid rgba(216, 91, 47, 0.35);
+  border-color: rgba(216, 91, 47, 0.5);
+}
+
+.contact-card {
+  width: min(780px, 100%);
+}
+
+.honeypot {
+  position: absolute;
+  left: -100vw;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .form-actions {
   display: flex;
   gap: 16px;
@@ -1110,6 +1218,10 @@ label.cta {
     align-items: flex-start;
   }
 
+  .cta-band-actions {
+    width: 100%;
+  }
+
   .examples-flow {
     display: none;
   }
@@ -1159,6 +1271,12 @@ label.cta {
 
   .cta-band {
     padding: 24px;
+  }
+
+  .cta-band-actions .cta,
+  .cta-band-actions .ghost {
+    width: 100%;
+    text-align: center;
   }
 
   .footer {

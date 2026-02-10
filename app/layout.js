@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "LegalAI - Opstellen. Beoordelen. Verdedigen.",
-  description: "Een gedurfde landingspagina voor een juridische AI-omgeving."
+  title: "LegalAI | AI voor advocatenkantoren in Nederland",
+  description:
+    "Versnel contractanalyse, jurisprudentieonderzoek en juridische vraagbeantwoording met ECLI-bronnen en workflow voor Nederlandse advocatenkantoren."
 };
 
 export default function RootLayout({ children }) {
