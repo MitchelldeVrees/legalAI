@@ -14,6 +14,88 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 const jsonError = (message, status) =>
   NextResponse.json({ error: message }, { status });
 
+const callSearchRpc = async (queryText, embedding, matchCount) => {
+  const rpcAttempts = [
+    {
+      name: "hybrid_search_chunks",
+      args: {
+        query: queryText,
+        query_embedding: embedding,
+        match_count: matchCount
+      }
+    },
+    {
+      name: "match_ecli_chunks",
+      args: {
+        query_embedding: embedding,
+        match_count: matchCount
+      }
+    },
+    {
+      name: "match_ecli_chunks",
+      args: {
+        embedding,
+        match_count: matchCount
+      }
+    },
+    {
+      name: "match_ecli_chunks",
+      args: {
+        query: queryText,
+        query_embedding: embedding,
+        match_count: matchCount
+      }
+    },
+    {
+      name: "match_ecli_chunks",
+      args: {
+        query_text: queryText,
+        query_embedding: embedding,
+        match_count: matchCount
+      }
+    },
+    {
+      name: "match_ecli_chunks",
+      args: {
+        query_embedding: embedding,
+        match_threshold: 0,
+        match_count: matchCount
+      }
+    },
+    {
+      name: "match_ecli_chunks",
+      args: {
+        embedding,
+        match_threshold: 0,
+        match_count: matchCount
+      }
+    }
+  ];
+
+  let lastError = null;
+
+  for (const attempt of rpcAttempts) {
+    const { data, error } = await supabase.rpc(attempt.name, attempt.args);
+    if (!error) {
+      return data || [];
+    }
+
+    lastError = error;
+    const isMissingOrSignatureError =
+      error?.code === "PGRST202" ||
+      String(error?.message || "").toLowerCase().includes("schema cache");
+
+    if (!isMissingOrSignatureError) {
+      throw error;
+    }
+  }
+
+  throw (
+    lastError ||
+    new Error("No compatible search RPC function found (hybrid_search_chunks/match_ecli_chunks).")
+  );
+};
+
 export async function POST(request) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !OPENAI_API_KEY) {
     return jsonError("Server is not configured for search.", 500);
@@ -59,16 +141,7 @@ export async function POST(request) {
       return jsonError("Embedding response missing data.", 500);
     }
 
-    const { data, error } = await supabase.rpc("hybrid_search_chunks", {
-      query,
-      query_embedding: embedding,
-      match_count: matchCount
-    });
-
-    if (error) {
-      console.error("Supabase RPC error:", error);
-      return jsonError("Search request failed.", 500);
-    }
+    const data = await callSearchRpc(query, embedding, matchCount);
 
     const grouped = new Map();
     (data || []).forEach((row) => {
@@ -77,14 +150,15 @@ export async function POST(request) {
         return;
       }
       const existing = grouped.get(key);
-      if (!existing || row.score > existing.score) {
+      const rowScore = Number(row?.score ?? row?.similarity ?? row?.rank ?? 0);
+      if (!existing || rowScore > existing.score) {
         grouped.set(key, {
           ecli: row.ecli,
-          title: row.title,
-          court: row.court,
-          decision_date: row.decision_date,
-          content: row.content,
-          score: row.score
+          title: row?.title || row?.case_title || "",
+          court: row?.court || row?.instantie || "",
+          decision_date: row?.decision_date || row?.datum_uitspraak || "",
+          content: row?.content || row?.chunk_text || row?.text || "",
+          score: rowScore
         });
       }
     });

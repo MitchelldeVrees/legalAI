@@ -10,6 +10,57 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 );
 
+let accountCache = {
+  email: "",
+  fullName: "",
+  ready: false
+};
+let accountLoadPromise = null;
+
+const readAccountFromSupabase = async () => {
+  const { data } = await supabase.auth.getUser();
+  const userEmail = data?.user?.email || "";
+  if (!userEmail) {
+    return { email: "", fullName: "", ready: false };
+  }
+
+  let fullName = "";
+  const { data: accountRow } = await supabase
+    .from("accounts")
+    .select("full_name")
+    .eq("email", userEmail)
+    .single();
+
+  if (accountRow?.full_name) {
+    fullName = accountRow.full_name;
+  }
+
+  return {
+    email: userEmail,
+    fullName,
+    ready: true
+  };
+};
+
+const loadAccountWithCache = async () => {
+  if (accountCache.ready) {
+    return accountCache;
+  }
+
+  if (!accountLoadPromise) {
+    accountLoadPromise = readAccountFromSupabase()
+      .then((result) => {
+        accountCache = result;
+        return result;
+      })
+      .finally(() => {
+        accountLoadPromise = null;
+      });
+  }
+
+  return accountLoadPromise;
+};
+
 export default function DashboardShell({
   eyebrow = "Dashboard",
   title,
@@ -28,32 +79,35 @@ export default function DashboardShell({
 
   useEffect(() => {
     const loadUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      const userEmail = data?.user?.email || "";
+      const cached = await loadAccountWithCache();
+      const userEmail = cached.email;
       if (!userEmail) {
         router.push("/login");
         return;
       }
 
       setAccountEmail(userEmail);
-
-      const { data: accountRow } = await supabase
-        .from("accounts")
-        .select("full_name")
-        .eq("email", userEmail)
-        .single();
-
-      if (accountRow?.full_name) {
-        setAccountName(accountRow.full_name);
-      }
-
+      setAccountName(cached.fullName || "Gebruiker");
       setAuthReady(true);
     };
 
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user?.email) {
+        accountCache = { email: "", fullName: "", ready: false };
+      }
+    });
+
     loadUser();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [router]);
 
   const handleSignOut = async () => {
+    accountCache = { email: "", fullName: "", ready: false };
     await supabase.auth.signOut();
     router.push("/");
   };

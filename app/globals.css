@@ -838,6 +838,35 @@ label.cta {
   margin: 6px 0 0;
 }
 
+.source-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 15, 20, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.source-modal {
+  width: min(820px, 100%);
+  max-height: 86vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(30, 42, 54, 0.12);
+  box-shadow: 0 20px 50px rgba(30, 42, 54, 0.24);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.source-modal mark {
+  background: rgba(216, 91, 47, 0.25);
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
 @media (max-width: 900px) {
   .dashboard-body {
     grid-template-columns: 1fr;
