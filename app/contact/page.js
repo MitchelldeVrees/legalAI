@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const initialForm = {
   fullName: "",
@@ -38,15 +38,25 @@ export default function ContactPage() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ loading: false, error: "", success: false });
   const [started, setStarted] = useState(false);
+  const [intent, setIntent] = useState("demo");
 
   const calendarUrl = useMemo(() => process.env.NEXT_PUBLIC_DEMO_CALENDAR_URL || "", []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    setIntent(params.get("intent") === "contact" ? "contact" : "demo");
+  }, []);
 
   const handleStart = () => {
     if (started) {
       return;
     }
     setStarted(true);
-    trackEvent("contact_form_started", { source: "contact_page" });
+    trackEvent("contact_form_started", { source: `contact_page_${intent}` });
   };
 
   const handleChange = (event) => {
@@ -73,7 +83,7 @@ export default function ContactPage() {
 
       setForm(initialForm);
       setStatus({ loading: false, error: "", success: true });
-      trackEvent("contact_form_submit_success", { source: "contact_page" });
+      trackEvent("contact_form_submit_success", { source: `contact_page_${intent}` });
       return;
     } catch (error) {
       setStatus({
@@ -89,8 +99,12 @@ export default function ContactPage() {
       <div className="halo" aria-hidden="true" />
       <section className="form-card contact-card">
         <div className="form-header">
-          <p className="eyebrow">Plan demo</p>
-          <h1>Plan een demo voor jouw advocatenkantoor</h1>
+          <p className="eyebrow">{intent === "contact" ? "Contact" : "Plan demo"}</p>
+          <h1>
+            {intent === "contact"
+              ? "Neem contact op over LegalAI voor je kantoor"
+              : "Plan een demo voor jouw advocatenkantoor"}
+          </h1>
           <p className="lead">
             Laat weten waar je team op vastloopt. We laten in een korte sessie zien
             hoe LegalAI kan helpen in jullie dagelijkse praktijk.

@@ -38,21 +38,31 @@
 export const demoSidebarItems = {
   contract: [
     { label: "Contract reader", href: "/demo", active: true },
+    { label: "Documenten uploaden", href: "/demo/document-upload" },
+    { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
+    { label: "Vraag stellen", href: "/demo/vraag-stellen" }
+  ],
+  upload: [
+    { label: "Contract reader", href: "/demo" },
+    { label: "Documenten uploaden", href: "/demo/document-upload", active: true },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ],
   search: [
     { label: "Contract reader", href: "/demo" },
+    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search", active: true },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ],
   vraag: [
     { label: "Contract reader", href: "/demo" },
+    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen", active: true }
   ],
   detail: [
     { label: "Contract reader", href: "/demo" },
+    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ]

@@ -68,3 +68,16 @@ create policy "public delete accounts"
 
 grant delete on public.firms to anon, authenticated;
 grant delete on public.accounts to anon, authenticated;
+
+create table if not exists public.contact_requests (
+  id uuid primary key default gen_random_uuid(),
+  full_name text not null,
+  work_email text not null,
+  firm_name text not null,
+  role text not null,
+  use_case text not null,
+  submitted_at timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.contact_requests enable row level security;
