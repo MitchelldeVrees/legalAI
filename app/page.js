@@ -138,7 +138,7 @@ export default function Home() {
               <div className="zw-demo-dot" />
               <div className="zw-demo-dot" />
               <div className="zw-demo-dot" />
-              <span className="zw-demo-label">Zaakwijzer · live voorbeeld</span>
+              <span className="zw-demo-label">Zaakwijzer · voorbeeld</span>
             </div>
 
             <div className="zw-demo-body">
@@ -276,12 +276,12 @@ export default function Home() {
           <div className="zw-testimonial-card">
             <div className="zw-quote-mark">&quot;</div>
             <p className="zw-testimonial-text">
-              Als klein kantoor willen we dezelfde research-kwaliteit leveren als grote firms, zonder een
-              team achter ons. Deze workflow maakt dat haalbaar.
+              Bij een ontslagdossier hadden we binnen enkele minuten bruikbare ECLI’s in beeld. We toetsen
+              alles nog steeds zelf, maar de eerste researchronde kost nu duidelijk minder tijd.
             </p>
-            <div className="zw-testimonial-author">Voorbeeld uit pilotgroep</div>
-            <div className="zw-testimonial-role">Advocaat, midden-groot kantoor in Nederland</div>
-            <p className="zw-placeholder-note">Binnenkort: geverifieerde testimonials van gebruikers.</p>
+            <div className="zw-testimonial-author">Anonieme pilotdeelnemer</div>
+            <div className="zw-testimonial-role">Advocaat arbeidsrecht, kantoor met 12 medewerkers</div>
+            <p className="zw-placeholder-note">Citaat geanonimiseerd op verzoek van het kantoor.</p>
           </div>
         </div>
       </section>

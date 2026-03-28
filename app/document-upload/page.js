@@ -1,8 +1,8 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import DashboardShell from "../components/DashboardShell";
+import { buildRechtspraakDetailUrl } from "../../lib/rechtspraak";
 
 const allowedExtensions = [".pdf", ".docx"];
 const allowedMimeTypes = new Set([
@@ -403,18 +403,21 @@ export default function DocumentUploadPage() {
       <div className="results-list">
         {cases.map((item, index) => {
           const ecliValue = item?.ecli || "";
-          const ecliHref = ecliValue
-            ? `/jurispudentie/${encodeURIComponent(ecliValue)}`
-            : "";
+          const ecliHref = buildRechtspraakDetailUrl(ecliValue);
 
           return (
             <div className="result-item" key={`${ecliValue}-${index}`}>
               <div className="result-header">
                 <div>
                   {ecliHref ? (
-                    <Link className="result-link" href={ecliHref}>
+                    <a
+                      className="result-link"
+                      href={ecliHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <strong>{ecliValue}</strong>
-                    </Link>
+                    </a>
                   ) : (
                     <strong>Onbekende ECLI</strong>
                   )}
@@ -659,12 +662,14 @@ export default function DocumentUploadPage() {
                 </p>
                 {selectedEcliCase?.ecli ? (
                   <p className="result-meta">
-                    <Link
+                    <a
                       className="result-link"
-                      href={`/jurispudentie/${encodeURIComponent(selectedEcliCase.ecli)}`}
+                      href={buildRechtspraakDetailUrl(selectedEcliCase.ecli)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       Open volledige jurisprudentie: {selectedEcliCase.ecli}
-                    </Link>
+                    </a>
                   </p>
                 ) : null}
                 {selectedEcliCase?.title ? (

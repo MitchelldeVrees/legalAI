@@ -60,7 +60,7 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      setMessage("Geen geldige login gevonden. Probeer het opnieuw.");
+      setMessage("Geen geldige login token gevonden. Probeer het opnieuw.");
     };
 
     handleAuth();
@@ -73,6 +73,15 @@ export default function AuthCallbackPage() {
         <div className="form-header">
           <p className="eyebrow">Inloggen</p>
           <h1>{message}</h1>
+        </div>
+        <div className="form-actions">
+          <button
+            className="ghost"
+            type="button"
+            onClick={() => router.push("/")}
+          >
+            Terug naar home
+          </button>
         </div>
       </section>
     </main>

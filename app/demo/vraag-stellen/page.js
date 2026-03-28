@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DemoDashboardShell from "../../components/DemoDashboardShell";
 import { demoScenario, demoSidebarItems } from "../_data/demoFixtures";
+import { buildRechtspraakDetailUrl } from "../../../lib/rechtspraak";
 
 export default function DemoVraagStellenPage() {
   const [searchStatus, setSearchStatus] = useState({
@@ -85,7 +86,9 @@ export default function DemoVraagStellenPage() {
                   <div>
                     <a
                       className="result-link"
-                      href={`/demo/jurispudentie/${encodeURIComponent(result.ecli)}`}
+                      href={result.detail_url || buildRechtspraakDetailUrl(result.ecli)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <strong>{result.ecli}</strong>
                     </a>

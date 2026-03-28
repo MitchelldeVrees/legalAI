@@ -38,31 +38,26 @@
 export const demoSidebarItems = {
   contract: [
     { label: "Contract reader", href: "/demo", active: true },
-    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ],
   upload: [
     { label: "Contract reader", href: "/demo" },
-    { label: "Documenten uploaden", href: "/demo/document-upload", active: true },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ],
   search: [
     { label: "Contract reader", href: "/demo" },
-    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search", active: true },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ],
   vraag: [
     { label: "Contract reader", href: "/demo" },
-    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen", active: true }
   ],
   detail: [
     { label: "Contract reader", href: "/demo" },
-    { label: "Documenten uploaden", href: "/demo/document-upload" },
     { label: "Jurispudentie search", href: "/demo/jurispudentie-search" },
     { label: "Vraag stellen", href: "/demo/vraag-stellen" }
   ]
@@ -98,64 +93,65 @@ const contractAnalysisMarkdown = `# Analyse (demo)
 
 const searchResults = [
   {
-    ecli: "ECLI:NL:HR:2019:1734",
-    title: "Hoge Raad - ontslag op staande voet en proportionaliteit",
-    court: "Hoge Raad",
-    decision_date: "2019-11-08",
+    ecli: "ECLI:NL:PHR:2023:779",
+    detail_url:
+      "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:PHR:2023:779&showbutton=true&keyword=Ontslag%2Bop%2Bstaande%2Bvoet%253a%2Beisen%2Baan%2Bdringende%2Breden%2Ben%2Bbewijs&idx=1",
+    title: "Conclusie PHR - dringende reden en bewijs bij ontslag op staande voet",
+    court: "Parket bij de Hoge Raad",
+    decision_date: "2023-01-01",
     content:
-      "De Hoge Raad benadrukt dat voor ontslag op staande voet een integrale proportionaliteitstoets vereist is, inclusief eerdere waarschuwingen en context van het dienstverband.",
+      "De conclusie behandelt welke feiten en bewijsstukken nodig zijn om een dringende reden juridisch houdbaar te onderbouwen.",
     score: 0.932
   },
   {
-    ecli: "ECLI:NL:GHSHE:2022:1458",
-    title: "Gerechtshof 's-Hertogenbosch - dringende reden onvoldoende onderbouwd",
+    ecli: "ECLI:NL:GHSHE:2013:BZ8607",
+    detail_url:
+      "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:GHSHE:2013:BZ8607&showbutton=true&keyword=Ontslag%2Bop%2Bstaande%2Bvoet%253a%2Beisen%2Baan%2Bdringende%2Breden%2Ben%2Bbewijs&idx=2",
+    title: "Gerechtshof 's-Hertogenbosch - toetsing dringende reden",
     court: "Gerechtshof 's-Hertogenbosch",
-    decision_date: "2022-05-17",
+    decision_date: "2013-01-01",
     content:
-      "Het hof oordeelt dat de werkgever de dringende reden onvoldoende concreet heeft gemaakt en dat minder vergaande maatregelen eerst onderzocht hadden moeten worden.",
+      "Het hof benadrukt dat de beoordeling sterk afhangt van concrete feiten, onderbouwing en de context van het dienstverband.",
     score: 0.914
   },
   {
-    ecli: "ECLI:NL:RBAMS:2021:5021",
-    title: "Rechtbank Amsterdam - bewijswaardering bij integriteitskwestie",
-    court: "Rechtbank Amsterdam",
-    decision_date: "2021-09-29",
+    ecli: "ECLI:NL:RBROT:2023:11286",
+    detail_url:
+      "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:RBROT:2023:11286&showbutton=true&keyword=Ontslag%2Bop%2Bstaande%2Bvoet%253a%2Beisen%2Baan%2Bdringende%2Breden%2Ben%2Bbewijs&idx=4",
+    title: "Rechtbank Rotterdam - onderbouwing en bewijspositie werkgever",
+    court: "Rechtbank Rotterdam",
+    decision_date: "2023-01-01",
     content:
-      "De rechtbank stelt dat interne onderzoeksbevindingen zonder hoor en wederhoor beperkt gewicht hebben bij beoordeling van een ontslag op staande voet.",
+      "De rechtbank bespreekt welke dossiervorming en feitelijke onderbouwing nodig zijn bij een beroep op ontslag op staande voet.",
     score: 0.901
   },
   {
-    ecli: "ECLI:NL:GHARL:2020:8119",
-    title: "Gerechtshof Arnhem-Leeuwarden - waarschuwingsvereiste",
-    court: "Gerechtshof Arnhem-Leeuwarden",
-    decision_date: "2020-10-20",
+    ecli: "ECLI:NL:RBZWB:2026:1393",
+    detail_url:
+      "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:RBZWB:2026:1393&showbutton=true&keyword=Ontslag%2Bop%2Bstaande%2Bvoet%253a%2Beisen%2Baan%2Bdringende%2Breden%2Ben%2Bbewijs&idx=2",
+    title: "Rechtbank Zeeland-West-Brabant - beoordeling ontslag op staande voet",
+    court: "Rechtbank Zeeland-West-Brabant",
+    decision_date: "2026-01-01",
     content:
-      "Bij herhaald verwijtbaar gedrag kan ontslag op staande voet standhouden, mits de werknemer vooraf aantoonbaar is gewaarschuwd voor de gevolgen.",
+      "In deze uitspraak staat de combinatie van dringende reden, proportionaliteit en bewijswaardering centraal.",
     score: 0.887
   },
   {
-    ecli: "ECLI:NL:RBDHA:2023:11874",
-    title: "Rechtbank Den Haag - belangenafweging werknemer/werkgever",
-    court: "Rechtbank Den Haag",
-    decision_date: "2023-08-11",
+    ecli: "ECLI:NL:RBZWB:2026:1207",
+    detail_url:
+      "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:RBZWB:2026:1207&showbutton=true&keyword=Ontslag%2Bop%2Bstaande%2Bvoet%253a%2Beisen%2Baan%2Bdringende%2Breden%2Ben%2Bbewijs&idx=3",
+    title: "Rechtbank Zeeland-West-Brabant - motivering en bewijslast",
+    court: "Rechtbank Zeeland-West-Brabant",
+    decision_date: "2026-01-01",
     content:
-      "In de belangenafweging wegen de gevolgen van ontslag zwaar mee, waaronder duur van het dienstverband en persoonlijke omstandigheden.",
-    score: 0.873
-  },
-  {
-    ecli: "ECLI:NL:HR:2018:2074",
-    title: "Hoge Raad - onverwijldheidseis nader uitgewerkt",
-    court: "Hoge Raad",
-    decision_date: "2018-11-30",
-    content:
-      "Voor onverwijldheid geldt dat de werkgever voortvarend moet handelen na kennisneming van relevante feiten, met beperkte ruimte voor intern onderzoek.",
+      "De uitspraak geeft handvatten voor motivering, feitenvaststelling en de bewijslast bij ontslag op staande voet.",
     score: 0.861
   }
 ];
 
 const vraagSources = searchResults.slice(0, 4);
 
-const vraagAnswerText = `Op basis van de geselecteerde jurisprudentie lijkt een ontslag op staande voet alleen houdbaar als (1) de dringende reden concreet en bewijsbaar is, (2) de werkgever onverwijld heeft gehandeld en (3) proportionaliteit in de specifieke context is gewaarborgd. In deze demo-bronnen benadrukt ECLI:NL:HR:2019:1734 dat eerdere waarschuwingen en omstandigheden van de werknemer zwaar meewegen. ECLI:NL:GHSHE:2022:1458 laat zien dat een onvoldoende feitelijke onderbouwing leidt tot vernietiging van het ontslag. Conclusie: zonder sterke dossieropbouw en duidelijke waarschuwingen is het procesrisico aanzienlijk.`;
+const vraagAnswerText = `Op basis van de geselecteerde jurisprudentie lijkt een ontslag op staande voet alleen houdbaar als (1) de dringende reden concreet en bewijsbaar is, (2) de werkgever onverwijld heeft gehandeld en (3) proportionaliteit in de specifieke context is gewaarborgd. In deze demo-bronnen benadrukken ECLI:NL:PHR:2023:779 en ECLI:NL:GHSHE:2013:BZ8607 dat feitelijke onderbouwing en consistente dossiervorming doorslaggevend zijn. Conclusie: zonder sterke dossieropbouw en duidelijke motivering is het procesrisico aanzienlijk.`;
 
 const ecliDetails = searchResults.reduce((acc, result) => {
   acc[result.ecli] = {

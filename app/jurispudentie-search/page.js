@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import DashboardShell from "../components/DashboardShell";
+import { buildRechtspraakDetailUrl } from "../../lib/rechtspraak";
 
 export default function JurispudentieSearchPage() {
   const [searchStatus, setSearchStatus] = useState({
@@ -162,17 +162,20 @@ export default function JurispudentieSearchPage() {
             <div className="results-list">
               {results.map((result, index) => {
                 const ecliValue = result.ecli || "";
-                const ecliHref = ecliValue
-                  ? `/jurispudentie/${encodeURIComponent(ecliValue)}`
-                  : "";
+                const ecliHref = buildRechtspraakDetailUrl(ecliValue);
                 return (
                   <div className="result-item" key={`${result.ecli}-${index}`}>
                     <div className="result-header">
                       <div>
                         {ecliHref ? (
-                          <Link className="result-link" href={ecliHref}>
+                          <a
+                            className="result-link"
+                            href={ecliHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <strong>{result.ecli}</strong>
-                          </Link>
+                          </a>
                         ) : (
                           <strong>Onbekende ECLI</strong>
                         )}

@@ -9,12 +9,15 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 );
 
+const OTP_COOLDOWN_SECONDS = 60;
+
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState({ loading: false, error: "" });
   const [info, setInfo] = useState("");
+  const [retryAfter, setRetryAfter] = useState(0);
 
   useEffect(() => {
     if (searchParams.get("sent") === "1") {
@@ -22,9 +25,26 @@ function LoginContent() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (retryAfter <= 0) {
+      return undefined;
+    }
+
+    const timer = window.setInterval(() => {
+      setRetryAfter((prev) => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [retryAfter]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (retryAfter > 0) {
+      return;
+    }
+
     setStatus({ loading: true, error: "" });
+    setInfo("");
 
     try {
       if (
@@ -52,6 +72,10 @@ function LoginContent() {
         });
 
         if (authError) {
+          if (authError.status === 429) {
+            setRetryAfter(OTP_COOLDOWN_SECONDS);
+            throw new Error("RATE_LIMIT");
+          }
           throw authError;
         }
       }
@@ -61,7 +85,10 @@ function LoginContent() {
     } catch (error) {
       setStatus({
         loading: false,
-        error: "Inloggen mislukt. Controleer je gegevens."
+        error:
+          error?.message === "RATE_LIMIT"
+            ? "Te veel inlogpogingen. Wacht 60 seconden en probeer opnieuw."
+            : "Inloggen mislukt. Controleer je gegevens."
       });
       return;
     }
@@ -95,8 +122,16 @@ function LoginContent() {
           {status.error ? <p className="form-error">{status.error}</p> : null}
 
           <div className="form-actions">
-            <button className="cta" type="submit" disabled={status.loading}>
-              {status.loading ? "Bezig..." : "Inloggen"}
+            <button
+              className="cta"
+              type="submit"
+              disabled={status.loading || retryAfter > 0}
+            >
+              {status.loading
+                ? "Bezig..."
+                : retryAfter > 0
+                ? `Wacht ${retryAfter}s`
+                : "Inloggen"}
             </button>
             <button
               className="ghost"

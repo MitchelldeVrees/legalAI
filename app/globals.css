@@ -759,6 +759,40 @@ label.cta {
   gap: 20px;
 }
 
+.dashboard-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-brand-mark {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.demo-brand-mark {
+  width: 80px;
+  height: 80px;
+}
+
+.demo-header {
+  display: grid;
+  gap: 10px;
+}
+
+.demo-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .demo-disclaimer {
   margin: 0;
   padding: 12px 14px;
@@ -773,6 +807,15 @@ label.cta {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.demo-header-actions {
+  margin-left: auto;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(30, 42, 54, 0.12);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 24px rgba(30, 42, 54, 0.08);
 }
 
 .account-chip {
@@ -1178,6 +1221,17 @@ label.cta {
     right: 0;
     left: 0;
   }
+
+  .demo-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .demo-header-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
 }
 
 @keyframes float {
@@ -1357,10 +1411,19 @@ label.cta {
 }
 
 .zw-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: "Playfair Display", "Times New Roman", serif;
   letter-spacing: 0.02em;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.zw-logo-mark {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
 }
 
 .zw-links {
@@ -2026,9 +2089,18 @@ label.cta {
 }
 
 .zw-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: "Playfair Display", "Times New Roman", serif;
   font-size: 1.3rem;
   font-weight: 600;
+}
+
+.zw-footer-logo-mark {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .zw-footer-links {
