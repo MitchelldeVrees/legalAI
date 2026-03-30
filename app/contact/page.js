@@ -102,12 +102,12 @@ export default function ContactPage() {
           <p className="eyebrow">{intent === "contact" ? "Contact" : "Plan demo"}</p>
           <h1>
             {intent === "contact"
-              ? "Neem contact op over LegalAI voor je kantoor"
+              ? "Neem contact op over Zaakwijzer voor je kantoor"
               : "Plan een demo voor jouw advocatenkantoor"}
           </h1>
           <p className="lead">
             Laat weten waar je team op vastloopt. We laten in een korte sessie zien
-            hoe LegalAI kan helpen in jullie dagelijkse praktijk.
+            hoe Zaakwijzer kan helpen in jullie dagelijkse praktijk.
           </p>
         </div>
 

@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { requireAuthenticatedAccount } from "../../../lib/serverApiAuth";
 import {
   createRequestContext,
+  logDebugPayload,
   logProviderError,
   logRequestEnd,
   logRequestStart,
@@ -223,6 +224,12 @@ export async function POST(request) {
   logRequestStart(ctx);
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !OPENAI_API_KEY) {
+    logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+      stage: "config",
+      has_supabase_url: Boolean(SUPABASE_URL),
+      has_supabase_anon_key: Boolean(SUPABASE_ANON_KEY),
+      has_openai_api_key: Boolean(OPENAI_API_KEY)
+    });
     await logRequestEnd(ctx, { status: 500 });
     return jsonError("Server is not configured for search.", 500);
   }
@@ -239,26 +246,57 @@ export async function POST(request) {
   let payload;
   try {
     if (getContentLength(request) > SEARCH_MAX_BODY_BYTES) {
+      logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+        stage: "request_size",
+        content_length: getContentLength(request),
+        max_body_bytes: SEARCH_MAX_BODY_BYTES
+      });
       await logRequestEnd(ctx, { status: 413 });
       return jsonError("Verzoek is te groot. Probeer een kortere zoekopdracht.", 413);
     }
 
     payload = await request.json();
   } catch {
+    logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+      stage: "json_parse",
+      content_length: getContentLength(request)
+    });
     await logRequestEnd(ctx, { status: 400 });
     return jsonError("Invalid JSON payload.", 400);
   }
 
   const query = String(payload?.query || "").trim().slice(0, SEARCH_MAX_QUERY_CHARS);
-  if (!query) {
-    await logRequestEnd(ctx, { status: 400 });
-    return jsonError("Query is required.", 400);
-  }
-
   const requestedK = Number(payload?.k || 40);
   const matchCount = Number.isFinite(requestedK)
     ? Math.max(1, Math.min(SEARCH_MAX_K, Math.floor(requestedK)))
     : 40;
+
+  logDebugPayload("search_request_payload", ctx.route, ctx.request_id, {
+    raw_payload: payload,
+    normalized: {
+      query,
+      query_length: query.length,
+      requested_k: payload?.k,
+      match_count: matchCount,
+      max_query_chars: SEARCH_MAX_QUERY_CHARS,
+      max_k: SEARCH_MAX_K
+    }
+  });
+
+  if (!query) {
+    logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+      stage: "validation",
+      reason: "missing_query",
+      normalized: {
+        query,
+        query_length: query.length,
+        requested_k: payload?.k,
+        match_count: matchCount
+      }
+    });
+    await logRequestEnd(ctx, { status: 400 });
+    return jsonError("Query is required.", 400);
+  }
 
   try {
     const embedResponse = await fetchWithRetry(
@@ -284,6 +322,15 @@ export async function POST(request) {
 
     if (!embedResponse.ok) {
       const errorText = await embedResponse.text();
+      logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+        stage: "openai_embed",
+        status: embedResponse.status,
+        error_text: errorText,
+        normalized: {
+          query,
+          match_count: matchCount
+        }
+      });
       console.error("Embeddings error:", embedResponse.status, errorText);
       await logProviderError("openai", {
         route: ctx.route,
@@ -303,6 +350,14 @@ export async function POST(request) {
 
     const embedding = embedJson?.data?.[0]?.embedding;
     if (!Array.isArray(embedding)) {
+      logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+        stage: "openai_embed",
+        reason: "embedding_missing_data",
+        normalized: {
+          query,
+          match_count: matchCount
+        }
+      });
       await logProviderError("openai", {
         route: ctx.route,
         request_id: ctx.request_id,
@@ -320,17 +375,43 @@ export async function POST(request) {
       if (!key) {
         return;
       }
-      const existing = grouped.get(key);
       const rowScore = Number(row?.score ?? row?.similarity ?? row?.rank ?? 0);
-      if (!existing || rowScore > existing.score) {
+      const rowContent = String(row?.content || row?.chunk_text || row?.text || "").trim();
+      const rowTitle = String(row?.title || row?.case_title || "").trim();
+      const rowCourt = String(row?.court || row?.instantie || "").trim();
+      const rowDecisionDate = String(
+        row?.decision_date || row?.datum_uitspraak || ""
+      ).trim();
+
+      const existing = grouped.get(key);
+      if (!existing) {
         grouped.set(key, {
           ecli: row.ecli,
-          title: row?.title || row?.case_title || "",
-          court: row?.court || row?.instantie || "",
-          decision_date: row?.decision_date || row?.datum_uitspraak || "",
-          content: row?.content || row?.chunk_text || row?.text || "",
+          title: rowTitle,
+          court: rowCourt,
+          decision_date: rowDecisionDate,
+          content: rowContent,
           score: rowScore
         });
+        return;
+      }
+
+      existing.score = Math.max(existing.score, rowScore);
+      if (!existing.title && rowTitle) {
+        existing.title = rowTitle;
+      }
+      if (!existing.court && rowCourt) {
+        existing.court = rowCourt;
+      }
+      if (!existing.decision_date && rowDecisionDate) {
+        existing.decision_date = rowDecisionDate;
+      }
+
+      const existingContent = String(existing.content || "").trim();
+      if (!existingContent && rowContent) {
+        existing.content = rowContent;
+      } else if (rowContent.length > existingContent.length) {
+        existing.content = rowContent;
       }
     });
 
@@ -338,12 +419,26 @@ export async function POST(request) {
       .sort((a, b) => b.score - a.score)
       .slice(0, SEARCH_MAX_RETURN_RESULTS);
 
+    logDebugPayload("search_response_payload", ctx.route, ctx.request_id, {
+      result_count: results.length,
+      max_return_results: SEARCH_MAX_RETURN_RESULTS,
+      results
+    });
+
     await logRequestEnd(ctx, {
       status: 200,
       extra: { result_count: results.length }
     });
     return NextResponse.json({ results });
   } catch (error) {
+    logDebugPayload("search_error_payload", ctx.route, ctx.request_id, {
+      stage: "search_pipeline",
+      error_message: String(error?.message || ""),
+      normalized: {
+        query,
+        match_count: matchCount
+      }
+    });
     console.error("Search route error:", error);
     const message = String(error?.message || "").toLowerCase();
     if (message.includes("supabase") || message.includes("pgrst") || message.includes("schema cache")) {

@@ -9,13 +9,13 @@ export default function DpaPage() {
       <section className="form-card">
         <div className="form-header">
           <p className="eyebrow">DPA</p>
-          <h1>Verwerkersovereenkomst (DPA) - LegalAI</h1>
+          <h1>Verwerkersovereenkomst (DPA) - Zaakwijzer</h1>
           <div className="terms-meta">
             <span>Versie: 1.0</span>
             <span>Datum: 30-03-2026</span>
           </div>
           <p className="lead">
-            LegalAI sluit op verzoek een verwerkersovereenkomst met zakelijke
+            Zaakwijzer sluit op verzoek een verwerkersovereenkomst met zakelijke
             klanten. Deze pagina beschrijft de kernpunten van onze
             gegevensverwerking als verwerker.
           </p>
@@ -27,7 +27,7 @@ export default function DpaPage() {
               <h2>Rollen</h2>
               <p>
                 Klant is verwerkingsverantwoordelijke voor persoonsgegevens in
-                Input. LegalAI is verwerker en verwerkt alleen op instructie van
+                Input. Zaakwijzer is verwerker en verwerkt alleen op instructie van
                 de Klant om de Dienst te leveren.
               </p>
             </li>
@@ -43,7 +43,7 @@ export default function DpaPage() {
               <h2>Data-categorieen</h2>
               <p>
                 Klant bepaalt welke persoonsgegevens in Input worden geplaatst.
-                LegalAI adviseert dataminimalisatie en anonimiseren waar mogelijk.
+                Zaakwijzer adviseert dataminimalisatie en anonimiseren waar mogelijk.
               </p>
             </li>
             <li>
@@ -51,7 +51,7 @@ export default function DpaPage() {
               <ul>
                 <li>OpenAI (model inference en embeddings).</li>
                 <li>Supabase (database, authenticatie en RPC-verwerking).</li>
-                <li>Hostingprovider van LegalAI (runtime en operationele logging).</li>
+                <li>Hostingprovider van Zaakwijzer (runtime en operationele logging).</li>
                 <li>Resend (alleen voor contact/e-mailfunctionaliteit).</li>
                 <li>Azure Blob Storage (bronbestanden jurisprudentie, indien gebruikt).</li>
               </ul>
@@ -59,7 +59,7 @@ export default function DpaPage() {
             <li>
               <h2>Opslag en retentie</h2>
               <p>
-                LegalAI biedt geen permanente contractopslag. Geuploade documenten
+                Zaakwijzer biedt geen permanente contractopslag. Geuploade documenten
                 worden verwerkt voor analyse en tijdelijke uploadbestanden worden
                 na verwerking verwijderd waar technisch mogelijk.
               </p>
@@ -78,7 +78,7 @@ export default function DpaPage() {
             <li>
               <h2>Rechten van betrokkenen</h2>
               <p>
-                LegalAI ondersteunt de Klant bij AVG-verzoeken van betrokkenen
+                Zaakwijzer ondersteunt de Klant bij AVG-verzoeken van betrokkenen
                 voor zover dit betrekking heeft op verwerkingen in de Dienst.
               </p>
             </li>
@@ -86,7 +86,7 @@ export default function DpaPage() {
               <h2>Contact voor ondertekening</h2>
               <p>
                 Voor een ondertekende DPA kun je contact opnemen via
-                <strong> mitchelldevries2001@gmail.com</strong>.
+                <strong> team@zaakwijzer.nl</strong>.
               </p>
             </li>
           </ol>

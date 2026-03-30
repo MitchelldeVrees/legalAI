@@ -9,14 +9,14 @@ export default function PrivacyverklaringPage() {
       <section className="form-card">
         <div className="form-header">
           <p className="eyebrow">Privacy</p>
-          <h1>Privacyverklaring - LegalAI (B2B)</h1>
+          <h1>Privacyverklaring - Zaakwijzer (B2B)</h1>
           <div className="terms-meta">
             <span>Versie: 1.1</span>
             <span>Datum: 30-03-2026</span>
           </div>
           <p className="lead">
-            Deze privacyverklaring legt uit hoe LegalAI persoonsgegevens verwerkt
-            wanneer je onze website en applicatie gebruikt ("Dienst"). LegalAI
+            Deze privacyverklaring legt uit hoe Zaakwijzer persoonsgegevens verwerkt
+            wanneer je onze website en applicatie gebruikt ("Dienst"). Zaakwijzer
             levert uitsluitend aan zakelijke klanten (B2B).
           </p>
         </div>
@@ -27,20 +27,20 @@ export default function PrivacyverklaringPage() {
               <h2>Wie is verantwoordelijk?</h2>
               <p>
                 Verwerkingsverantwoordelijke (controller) voor gegevens van
-                bezoekers, prospects en accountbeheer: LegalAI, Langestraat
+                bezoekers, prospects en accountbeheer: Zaakwijzer, Langestraat
                 XX Alkmaar, Nederland.
               </p>
               <p>
                 Registratie: 87292459.
               </p>
-              <p>E-mail: mitchelldevries2001@gmail.com</p>
+              <p>E-mail: team@zaakwijzer.nl</p>
               <p>
                 Rol als verwerker (processor): Wanneer jouw medewerkers de
                 Dienst gebruiken en daarbij (mogelijk) persoonsgegevens in
-                Input zetten (bijv. namen in een contract), verwerkt LegalAI
+                Input zetten (bijv. namen in een contract), verwerkt Zaakwijzer
                 die gegevens namens de Klant om de Dienst te leveren. In dat
                 geval is de Klant doorgaans verwerkingsverantwoordelijke en
-                LegalAI verwerker.
+                Zaakwijzer verwerker.
               </p>
               <p>
                 Op verzoek sluiten wij een verwerkersovereenkomst (DPA). Zie{" "}
@@ -116,7 +116,7 @@ export default function PrivacyverklaringPage() {
             <li>
               <h2>Opslag van contracten, training en AI-specifieke punten</h2>
               <p>
-                Geen permanente opslag van contracten: LegalAI biedt geen
+                Geen permanente opslag van contracten: Zaakwijzer biedt geen
                 archief/contractopslag. Input kan wel tijdelijk worden verwerkt
                 om direct Output te genereren (sessieverwerking).
               </p>
@@ -183,7 +183,7 @@ export default function PrivacyverklaringPage() {
             </li>
             <li>
               <h2>Beveiliging</h2>
-              <p>LegalAI neemt passende technische en organisatorische maatregelen, zoals:</p>
+              <p>Zaakwijzer neemt passende technische en organisatorische maatregelen, zoals:</p>
               <ul>
                 <li>versleutelde verbindingen (TLS);</li>
                 <li>toegangsbeperkingen (least privilege);</li>
@@ -205,10 +205,10 @@ export default function PrivacyverklaringPage() {
                 <li>dataportabiliteit (waar van toepassing).</li>
               </ul>
               <p>
-                Verzoeken kun je sturen naar: mitchelldevries2001@gmail.com.
+                Verzoeken kun je sturen naar: team@zaakwijzer.nl.
               </p>
               <p>
-                Wanneer LegalAI verwerker is (Input bevat persoonsgegevens
+                Wanneer Zaakwijzer verwerker is (Input bevat persoonsgegevens
                 namens Klant): dan loopt een verzoek meestal via jouw
                 werkgever/organisatie (de Klant). Wij helpen de Klant waar
                 nodig.

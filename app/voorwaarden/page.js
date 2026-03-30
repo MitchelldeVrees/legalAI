@@ -9,7 +9,7 @@ export default function VoorwaardenPage() {
       <section className="form-card">
         <div className="form-header">
           <p className="eyebrow">Voorwaarden</p>
-          <h1>Algemene Voorwaarden - LegalAI (B2B)</h1>
+          <h1>Algemene Voorwaarden - Zaakwijzer (B2B)</h1>
           <div className="terms-meta">
             <span>Versie: 1.1</span>
             <span>Ingangsdatum: 30-03-2026</span>
@@ -17,7 +17,7 @@ export default function VoorwaardenPage() {
           <p className="lead">
             Deze algemene voorwaarden ("Voorwaarden") zijn van toepassing op
             alle aanbiedingen, overeenkomsten en het gebruik van de
-            softwaredienst LegalAI.
+            softwaredienst Zaakwijzer.
           </p>
         </div>
 
@@ -26,11 +26,11 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Partijen</h2>
               <p>
-                LegalAI, gevestigd te Alkmaar, Langestraat XX,
-                registratienummer 87292459, hierna: "LegalAI".
+                Zaakwijzer, gevestigd te Alkmaar, Langestraat XX,
+                registratienummer 87292459, hierna: "Zaakwijzer".
               </p>
               <p>
-                Klant: de rechtspersoon of ondernemer die met LegalAI een
+                Klant: de rechtspersoon of ondernemer die met Zaakwijzer een
                 overeenkomst sluit en/of de Dienst gebruikt.
               </p>
               <p>
@@ -41,7 +41,7 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Definities</h2>
               <p>
-                Dienst: de online applicatie LegalAI inclusief (i)
+                Dienst: de online applicatie Zaakwijzer inclusief (i)
                 contractanalyse, (ii) zoeken/vinden van jurisprudentie en (iii)
                 Q&amp;A-functionaliteit met bronverwijzingen.
               </p>
@@ -81,7 +81,7 @@ export default function VoorwaardenPage() {
                 toegang hebben.
               </p>
               <p>
-                LegalAI mag redelijke gebruikslimieten hanteren (bijv. fair
+                Zaakwijzer mag redelijke gebruikslimieten hanteren (bijv. fair
                 use, rate limits) en deze wijzigen.
               </p>
             </li>
@@ -108,19 +108,19 @@ export default function VoorwaardenPage() {
                 </li>
               </ul>
               <p>
-                Jurisprudentie/verwijzingen. LegalAI kan verwijzingen geven
-                naar jurisprudentie en bronnen. LegalAI garandeert niet dat
+                Jurisprudentie/verwijzingen. Zaakwijzer kan verwijzingen geven
+                naar jurisprudentie en bronnen. Zaakwijzer garandeert niet dat
                 elke verwijzing volledig, actueel, passend of beschikbaar is.
               </p>
             </li>
             <li>
               <h2>Free tier</h2>
               <p>
-                LegalAI kan een gratis tier aanbieden met beperkte
+                Zaakwijzer kan een gratis tier aanbieden met beperkte
                 functionaliteit, limieten en/of beschikbaarheid.
               </p>
               <p>
-                LegalAI mag de inhoud, limieten of beschikbaarheid van de free
+                Zaakwijzer mag de inhoud, limieten of beschikbaarheid van de free
                 tier op elk moment wijzigen of beeindigen.
               </p>
               <p>
@@ -140,12 +140,12 @@ export default function VoorwaardenPage() {
               </p>
               <p>Betalingstermijn: 14 dagen na factuurdatum, tenzij anders vermeld.</p>
               <p>
-                Bij te late betaling mag LegalAI (i) wettelijke handelsrente en
+                Bij te late betaling mag Zaakwijzer (i) wettelijke handelsrente en
                 redelijke incassokosten in rekening brengen en/of (ii) toegang
                 (gedeeltelijk) opschorten.
               </p>
               <p>
-                LegalAI mag prijzen aanpassen. Prijswijzigingen voor lopende
+                Zaakwijzer mag prijzen aanpassen. Prijswijzigingen voor lopende
                 abonnementen gaan in per verlengingsdatum, of eerder indien
                 wettelijk toegestaan en met redelijke aankondiging.
               </p>
@@ -153,10 +153,10 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Input, gegevensverwerking en privacy</h2>
               <p>
-                Geen opslag van contracten. LegalAI slaat geen door Klant
+                Geen opslag van contracten. Zaakwijzer slaat geen door Klant
                 geuploade contracten op als permanente opslag. Input kan wel
                 tijdelijk worden verwerkt om de Dienst te leveren (bijv. in
-                sessie/geheugen/logs voor foutopsporing), maar LegalAI gebruikt
+                sessie/geheugen/logs voor foutopsporing), maar Zaakwijzer gebruikt
                 Input niet om modellen te trainen, zoals door Klant opgegeven.
               </p>
               <p>
@@ -169,7 +169,7 @@ export default function VoorwaardenPage() {
                 noodzakelijk is voor de beoogde analyse.
               </p>
               <p>
-                Voor zover LegalAI toch persoonsgegevens verwerkt, gebeurt dit
+                Voor zover Zaakwijzer toch persoonsgegevens verwerkt, gebeurt dit
                 conform de privacyverklaring en (indien nodig) een
                 verwerkersovereenkomst (DPA). Op verzoek sluiten partijen een
                 DPA; zie <Link href="/dpa">/dpa</Link> voor de actuele
@@ -181,16 +181,16 @@ export default function VoorwaardenPage() {
               <p>
                 Alle rechten op de Dienst, software, interfaces, teksten
                 (behalve Klant Input) en onderliggende technologie berusten bij
-                LegalAI en/of haar licentiegevers.
+                Zaakwijzer en/of haar licentiegevers.
               </p>
               <p>Klant behoudt rechten op eigen Input.</p>
               <p>
                 Voor Output geldt: voor zover wettelijk mogelijk verleent
-                LegalAI aan Klant een niet-exclusief, wereldwijd recht om Output
+                Zaakwijzer aan Klant een niet-exclusief, wereldwijd recht om Output
                 intern en commercieel te gebruiken voor eigen bedrijfsdoeleinden.
               </p>
               <p>
-                LegalAI garandeert niet dat Output vrij is van (mogelijke)
+                Zaakwijzer garandeert niet dat Output vrij is van (mogelijke)
                 rechten van derden of dat Output uniek is.
               </p>
             </li>
@@ -201,7 +201,7 @@ export default function VoorwaardenPage() {
                 abonnementsperiode met een opzegtermijn van 1 maand.
               </p>
               <p>
-                LegalAI mag de overeenkomst met onmiddellijke ingang beeindigen
+                Zaakwijzer mag de overeenkomst met onmiddellijke ingang beeindigen
                 of opschorten indien Klant:
               </p>
               <ul>
@@ -245,11 +245,11 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Aansprakelijkheid</h2>
               <p>
-                LegalAI is alleen aansprakelijk voor directe schade die het
+                Zaakwijzer is alleen aansprakelijk voor directe schade die het
                 rechtstreeks gevolg is van een toerekenbare tekortkoming van
-                LegalAI.
+                Zaakwijzer.
               </p>
-              <p>LegalAI is niet aansprakelijk voor:</p>
+              <p>Zaakwijzer is niet aansprakelijk voor:</p>
               <ul>
                 <li>
                   indirecte schade, gevolgschade, gederfde winst, gemiste
@@ -263,9 +263,9 @@ export default function VoorwaardenPage() {
               </ul>
               <p>
                 Aansprakelijkheidslimiet (betaald abonnement): de totale
-                aansprakelijkheid van LegalAI is beperkt tot het bedrag dat
+                aansprakelijkheid van Zaakwijzer is beperkt tot het bedrag dat
                 Klant in de 3 maanden voorafgaand aan het schadevoorval aan
-                LegalAI heeft betaald (excl. btw), met een maximum van EUR
+                Zaakwijzer heeft betaald (excl. btw), met een maximum van EUR
                 5000,- per jaar.
               </p>
               <p>
@@ -281,7 +281,7 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Vrijwaring</h2>
               <p>
-                Klant vrijwaart LegalAI tegen aanspraken van derden die verband
+                Klant vrijwaart Zaakwijzer tegen aanspraken van derden die verband
                 houden met:
               </p>
               <ul>
@@ -293,7 +293,7 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Overmacht</h2>
               <p>
-                LegalAI is niet gehouden tot nakoming bij overmacht, waaronder
+                Zaakwijzer is niet gehouden tot nakoming bij overmacht, waaronder
                 begrepen: storingen bij hosting/leveranciers, internet- of
                 stroomstoringen, stakingen, overheidsmaatregelen, en andere
                 omstandigheden buiten redelijke controle.
@@ -302,7 +302,7 @@ export default function VoorwaardenPage() {
             <li>
               <h2>Wijzigingen</h2>
               <p>
-                LegalAI mag deze Voorwaarden wijzigen. Wijzigingen worden vooraf
+                Zaakwijzer mag deze Voorwaarden wijzigen. Wijzigingen worden vooraf
                 aangekondigd (bijv. via e-mail of in-app). Als Klant niet
                 akkoord gaat, kan Klant opzeggen per ingangsdatum van de
                 wijziging.
@@ -319,7 +319,7 @@ export default function VoorwaardenPage() {
             </li>
             <li>
               <h2>Contact</h2>
-              <p>Vragen over deze Voorwaarden: mitchelldevries2001@gmail.com</p>
+              <p>Vragen over deze Voorwaarden: team@zaakwijzer.nl</p>
               <p>Adres: Langestraat XX, Alkmaar, Nederland</p>
               <p>Registratie: 87292459</p>
             </li>
