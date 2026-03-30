@@ -1,6 +1,11 @@
-"use client";
-
 import Link from "next/link";
+
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false
+  }
+};
 
 export default function VoorwaardenPage() {
   return (
@@ -319,7 +324,7 @@ export default function VoorwaardenPage() {
             </li>
             <li>
               <h2>Contact</h2>
-              <p>Vragen over deze Voorwaarden: mitchelldevries2001@gmail.com</p>
+              <p>Vragen over deze Voorwaarden: team@zaakwijzer.nl</p>
               <p>Adres: Langestraat XX, Alkmaar, Nederland</p>
               <p>Registratie: 87292459</p>
             </li>

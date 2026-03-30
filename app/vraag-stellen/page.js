@@ -20,6 +20,78 @@ export default function VraagStellenPage() {
   const [answerSources, setAnswerSources] = useState([]);
   const visibleResults = results.filter((result) => String(result?.ecli || "").trim());
 
+  const readAnswerResponse = async (response) => {
+    const contentType = String(response.headers.get("content-type") || "").toLowerCase();
+    if (!contentType.includes("application/x-ndjson")) {
+      const data = await response.json();
+      setAnswer(data?.answer || "");
+      setAnswerSources(Array.isArray(data?.answerSources) ? data.answerSources : []);
+      return;
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error("Missing response body.");
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    const handleLine = (line) => {
+      const trimmed = String(line || "").trim();
+      if (!trimmed) {
+        return "";
+      }
+
+      let event = null;
+      try {
+        event = JSON.parse(trimmed);
+      } catch {
+        return "";
+      }
+
+      if (event?.type === "delta" && typeof event.delta === "string") {
+        return event.delta;
+      }
+      if (event?.type === "done") {
+        setAnswerSources(
+          Array.isArray(event?.answerSources) ? event.answerSources : []
+        );
+      }
+      if (event?.type === "error") {
+        throw new Error(event?.message || "Antwoord stream fout.");
+      }
+      return "";
+    };
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      let chunkDelta = "";
+      for (const line of lines) {
+        chunkDelta += handleLine(line);
+      }
+      if (chunkDelta) {
+        setAnswer((prev) => prev + chunkDelta);
+      }
+    }
+
+    const trailing = buffer.trim();
+    if (trailing) {
+      const delta = handleLine(trailing);
+      if (delta) {
+        setAnswer((prev) => prev + delta);
+      }
+    }
+  };
+
   const handleAsk = async (event) => {
     event.preventDefault();
     const trimmedQuestion = question.trim();
@@ -33,6 +105,7 @@ export default function VraagStellenPage() {
     setAnswer("");
     setAnswerSources([]);
     setResults([]);
+    let requestPhase = "search";
 
     try {
       const searchHeaders = await buildAuthenticatedHeaders({
@@ -64,13 +137,18 @@ export default function VraagStellenPage() {
       }
 
       setAnswerStatus({ loading: true, error: "" });
+      requestPhase = "answer";
       const answerHeaders = await buildAuthenticatedHeaders({
         "Content-Type": "application/json"
       });
       const answerResponse = await fetch("/api/answer", {
         method: "POST",
         headers: answerHeaders,
-        body: JSON.stringify({ query: trimmedQuestion, results: ecliResults })
+        body: JSON.stringify({
+          query: trimmedQuestion,
+          results: ecliResults,
+          stream: true
+        })
       });
 
       if (!answerResponse.ok) {
@@ -79,19 +157,23 @@ export default function VraagStellenPage() {
         throw new Error("Answer failed.");
       }
 
-      const answerData = await answerResponse.json();
-      setAnswer(answerData?.answer || "");
-      setAnswerSources(
-        Array.isArray(answerData?.answerSources) ? answerData.answerSources : []
-      );
+      await readAnswerResponse(answerResponse);
       setAnswerStatus({ loading: false, error: "" });
     } catch (error) {
       console.error("Vraag stellen error:", error);
-      setSearchStatus({
-        loading: false,
-        error: "Vraag verwerken mislukt. Probeer het opnieuw."
-      });
-      setAnswerStatus({ loading: false, error: "" });
+      if (requestPhase === "answer") {
+        setSearchStatus({ loading: false, error: "" });
+        setAnswerStatus({
+          loading: false,
+          error: "Antwoord genereren mislukt. Probeer het opnieuw."
+        });
+      } else {
+        setSearchStatus({
+          loading: false,
+          error: "Vraag verwerken mislukt. Probeer het opnieuw."
+        });
+        setAnswerStatus({ loading: false, error: "" });
+      }
     }
   };
 
