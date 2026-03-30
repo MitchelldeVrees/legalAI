@@ -10,11 +10,12 @@
     "smoke:local": "bash scripts/smoke-local.sh"
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.45.4",
     "@openai/agents": "0.3.8",
+    "@supabase/supabase-js": "2.45.4",
+    "@vercel/analytics": "^1.6.1",
     "formidable": "3.5.4",
-    "markdown-to-jsx": "7.4.0",
     "mammoth": "1.8.0",
+    "markdown-to-jsx": "7.4.0",
     "next": "14.2.5",
     "pdf-parse": "1.1.1",
     "react": "18.2.0",
