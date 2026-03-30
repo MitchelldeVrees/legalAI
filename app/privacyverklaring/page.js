@@ -1,11 +1,6 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-  robots: {
-    index: false,
-    follow: false
-  }
-};
+import Link from "next/link";
 
 export default function PrivacyverklaringPage() {
   return (
@@ -38,7 +33,7 @@ export default function PrivacyverklaringPage() {
               <p>
                 Registratie: 87292459.
               </p>
-              <p>E-mail: team@zaakwijzer.nl</p>
+              <p>E-mail: mitchelldevries2001@gmail.com</p>
               <p>
                 Rol als verwerker (processor): Wanneer jouw medewerkers de
                 Dienst gebruiken en daarbij (mogelijk) persoonsgegevens in
@@ -210,7 +205,7 @@ export default function PrivacyverklaringPage() {
                 <li>dataportabiliteit (waar van toepassing).</li>
               </ul>
               <p>
-                Verzoeken kun je sturen naar: team@zaakwijzer.nl.
+                Verzoeken kun je sturen naar: mitchelldevries2001@gmail.com.
               </p>
               <p>
                 Wanneer LegalAI verwerker is (Input bevat persoonsgegevens

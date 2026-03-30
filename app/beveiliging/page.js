@@ -1,11 +1,6 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-  robots: {
-    index: false,
-    follow: false
-  }
-};
+import Link from "next/link";
 
 export default function BeveiligingPage() {
   return (

@@ -1,11 +1,6 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-  robots: {
-    index: false,
-    follow: false
-  }
-};
+import Link from "next/link";
 
 export default function DpaPage() {
   return (
@@ -91,7 +86,7 @@ export default function DpaPage() {
               <h2>Contact voor ondertekening</h2>
               <p>
                 Voor een ondertekende DPA kun je contact opnemen via
-                <strong> team@zaakwijzer.nl</strong>.
+                <strong> mitchelldevries2001@gmail.com</strong>.
               </p>
             </li>
           </ol>
@@ -106,3 +101,4 @@ export default function DpaPage() {
     </main>
   );
 }
+

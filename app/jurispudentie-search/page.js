@@ -20,78 +20,6 @@ export default function JurispudentieSearchPage() {
   const [answerSources, setAnswerSources] = useState([]);
   const visibleResults = results.filter((result) => String(result?.ecli || "").trim());
 
-  const readAnswerResponse = async (response) => {
-    const contentType = String(response.headers.get("content-type") || "").toLowerCase();
-    if (!contentType.includes("application/x-ndjson")) {
-      const data = await response.json();
-      setAnswer(data?.answer || "");
-      setAnswerSources(Array.isArray(data?.answerSources) ? data.answerSources : []);
-      return;
-    }
-
-    const reader = response.body?.getReader();
-    if (!reader) {
-      throw new Error("Missing response body.");
-    }
-
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    const handleLine = (line) => {
-      const trimmed = String(line || "").trim();
-      if (!trimmed) {
-        return "";
-      }
-
-      let event = null;
-      try {
-        event = JSON.parse(trimmed);
-      } catch {
-        return "";
-      }
-
-      if (event?.type === "delta" && typeof event.delta === "string") {
-        return event.delta;
-      }
-      if (event?.type === "done") {
-        setAnswerSources(
-          Array.isArray(event?.answerSources) ? event.answerSources : []
-        );
-      }
-      if (event?.type === "error") {
-        throw new Error(event?.message || "Antwoord stream fout.");
-      }
-      return "";
-    };
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
-
-      let chunkDelta = "";
-      for (const line of lines) {
-        chunkDelta += handleLine(line);
-      }
-      if (chunkDelta) {
-        setAnswer((prev) => prev + chunkDelta);
-      }
-    }
-
-    const trailing = buffer.trim();
-    if (trailing) {
-      const delta = handleLine(trailing);
-      if (delta) {
-        setAnswer((prev) => prev + delta);
-      }
-    }
-  };
-
   const handleSearch = async (event) => {
     event.preventDefault();
     const trimmedQuery = query.trim();
@@ -149,11 +77,7 @@ export default function JurispudentieSearchPage() {
       const response = await fetch("/api/answer", {
         method: "POST",
         headers,
-        body: JSON.stringify({
-          query: query.trim(),
-          results: visibleResults,
-          stream: true
-        })
+        body: JSON.stringify({ query: query.trim(), results: visibleResults })
       });
 
       if (!response.ok) {
@@ -162,7 +86,9 @@ export default function JurispudentieSearchPage() {
         throw new Error("Answer failed.");
       }
 
-      await readAnswerResponse(response);
+      const data = await response.json();
+      setAnswer(data?.answer || "");
+      setAnswerSources(Array.isArray(data?.answerSources) ? data.answerSources : []);
       setAnswerStatus({ loading: false, error: "" });
     } catch (error) {
       console.error("Answer request error:", error);
