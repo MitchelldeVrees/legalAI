@@ -4,6 +4,15 @@ import path from "path";
 import pdf from "pdf-parse";
 import mammoth from "mammoth";
 import { createClient } from "@supabase/supabase-js";
+import { requireAuthenticatedAccount } from "../../lib/serverApiAuth";
+import {
+  createRequestContext,
+  logProviderError,
+  logRequestEnd,
+  logRequestStart,
+  recordOpenAIUsage,
+  reportError
+} from "../../lib/observability";
 
 export const config = {
   api: {
@@ -19,6 +28,13 @@ const EMBED_DIM = Number(process.env.EMBED_DIM || 1536);
 const DOCUMENT_ANALYZE_MODEL = process.env.DOCUMENT_ANALYZE_MODEL || "gpt-4o-mini";
 const MAX_DOCUMENT_CHARS = Number(process.env.MAX_DOCUMENT_CHARS || 25000);
 const MAX_EMBED_CHARS = Number(process.env.MAX_EMBED_CHARS || 8000);
+const OPENAI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || 25000);
+const OPENAI_MAX_RETRIES = Number(process.env.OPENAI_MAX_RETRIES || 2);
+const SUPABASE_TIMEOUT_MS = Number(process.env.SUPABASE_TIMEOUT_MS || 12000);
+const SUPABASE_MAX_RETRIES = Number(process.env.SUPABASE_MAX_RETRIES || 2);
+const DOCUMENT_UPLOAD_MAX_FILE_SIZE_BYTES = Number(
+  process.env.DOCUMENT_UPLOAD_MAX_FILE_SIZE_BYTES || 12 * 1024 * 1024
+);
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { persistSession: false }
@@ -29,6 +45,118 @@ const allowedMimeTypes = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 ]);
+
+const cleanupTempFile = async (file) => {
+  const filePath = String(file?.filepath || "").trim();
+  if (!filePath) {
+    return;
+  }
+
+  try {
+    await fs.unlink(filePath);
+  } catch {
+    // Ignore cleanup failures for already-removed temp files.
+  }
+};
+
+const sleep = (ms) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const withTimeout = async (promise, timeoutMs, label) => {
+  let timer = null;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`${label}_TIMEOUT`)), timeoutMs);
+      })
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+};
+
+const fetchWithRetry = async (url, init, { timeoutMs, maxRetries, label }) => {
+  let lastError = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { ...init, signal: controller.signal });
+      clearTimeout(timeout);
+
+      const canRetryStatus = response.status >= 500 || response.status === 429;
+      if (response.ok || !canRetryStatus || attempt === maxRetries) {
+        return response;
+      }
+
+      await sleep(300 * (attempt + 1));
+      continue;
+    } catch (error) {
+      clearTimeout(timeout);
+      lastError = error;
+      if (attempt === maxRetries) {
+        break;
+      }
+      await sleep(300 * (attempt + 1));
+    }
+  }
+
+  throw lastError || new Error(`${label}_REQUEST_FAILED`);
+};
+
+const isRetryableSupabaseError = (error) => {
+  if (!error) {
+    return false;
+  }
+
+  const code = String(error?.code || "").toUpperCase();
+  const message = String(error?.message || "").toLowerCase();
+
+  return (
+    code === "57014" ||
+    message.includes("timeout") ||
+    message.includes("timed out") ||
+    message.includes("network") ||
+    message.includes("connection")
+  );
+};
+
+const callRpcWithRetry = async (name, args) => {
+  let lastError = null;
+  for (let attempt = 0; attempt <= SUPABASE_MAX_RETRIES; attempt += 1) {
+    try {
+      const rpcResult = await withTimeout(
+        supabase.rpc(name, args),
+        SUPABASE_TIMEOUT_MS,
+        "SUPABASE_RPC"
+      );
+      const { data, error } = rpcResult || {};
+      if (!error) {
+        return { data: data || [], error: null };
+      }
+
+      lastError = error;
+      if (!isRetryableSupabaseError(error) || attempt === SUPABASE_MAX_RETRIES) {
+        return { data: null, error };
+      }
+    } catch (error) {
+      lastError = error;
+      if (attempt === SUPABASE_MAX_RETRIES) {
+        break;
+      }
+    }
+
+    await sleep(250 * (attempt + 1));
+  }
+
+  return { data: null, error: lastError || new Error("SUPABASE_RPC_FAILED") };
+};
 
 const getExtension = (filename) => {
   const trimmed = String(filename || "").trim();
@@ -65,7 +193,11 @@ const limitText = (value, maxChars) => {
 
 const parseForm = (req) =>
   new Promise((resolve, reject) => {
-    const form = formidable({ multiples: false });
+    const form = formidable({
+      multiples: false,
+      maxFiles: 1,
+      maxFileSize: DOCUMENT_UPLOAD_MAX_FILE_SIZE_BYTES
+    });
     form.parse(req, (err, _fields, files) => {
       if (err) {
         reject(err);
@@ -126,18 +258,26 @@ const extractTextFromFile = async (file) => {
 };
 
 const fetchEmbedding = async (inputText) => {
-  const embedResponse = await fetch("https://api.openai.com/v1/embeddings", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAI_API_KEY}`
+  const embedResponse = await fetchWithRetry(
+    "https://api.openai.com/v1/embeddings",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: EMBED_MODEL,
+        input: limitText(inputText, MAX_EMBED_CHARS),
+        dimensions: EMBED_DIM
+      })
     },
-    body: JSON.stringify({
-      model: EMBED_MODEL,
-      input: limitText(inputText, MAX_EMBED_CHARS),
-      dimensions: EMBED_DIM
-    })
-  });
+    {
+      timeoutMs: OPENAI_TIMEOUT_MS,
+      maxRetries: OPENAI_MAX_RETRIES,
+      label: "OPENAI_EMBED"
+    }
+  );
 
   if (!embedResponse.ok) {
     const errorText = await embedResponse.text();
@@ -146,6 +286,11 @@ const fetchEmbedding = async (inputText) => {
   }
 
   const embedJson = await embedResponse.json();
+  recordOpenAIUsage({
+    model: EMBED_MODEL,
+    inputTokens: Number(embedJson?.usage?.prompt_tokens ?? embedJson?.usage?.input_tokens ?? 0),
+    outputTokens: 0
+  });
   const embedding = embedJson?.data?.[0]?.embedding;
   if (!Array.isArray(embedding)) {
     throw new Error("Embedding response missing data.");
@@ -215,7 +360,7 @@ const callSearchRpc = async (queryText, embedding, matchCount) => {
   let lastError = null;
 
   for (const attempt of rpcAttempts) {
-    const { data, error } = await supabase.rpc(attempt.name, attempt.args);
+    const { data, error } = await callRpcWithRetry(attempt.name, attempt.args);
     if (!error) {
       return data || [];
     }
@@ -367,26 +512,34 @@ TOP GERELATEERDE JURISPRUDENTIE (snippets):
 ${buildCaseContext(relatedCases) || "Niet gevonden."}
 `;
 
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAI_API_KEY}`
+  const response = await fetchWithRetry(
+    "https://api.openai.com/v1/responses",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: DOCUMENT_ANALYZE_MODEL,
+        input: [
+          {
+            role: "system",
+            content: SYSTEM_PROMPT
+          },
+          {
+            role: "user",
+            content: USER_PROMPT
+          }
+        ]
+      })
     },
-    body: JSON.stringify({
-      model: DOCUMENT_ANALYZE_MODEL,
-      input: [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT
-        },
-        {
-          role: "user",
-          content: USER_PROMPT
-        }
-      ]
-    })
-  });
+    {
+      timeoutMs: OPENAI_TIMEOUT_MS,
+      maxRetries: OPENAI_MAX_RETRIES,
+      label: "OPENAI_ANALYZE"
+    }
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -395,6 +548,11 @@ ${buildCaseContext(relatedCases) || "Niet gevonden."}
   }
 
   const data = await response.json();
+  recordOpenAIUsage({
+    model: DOCUMENT_ANALYZE_MODEL,
+    inputTokens: Number(data?.usage?.input_tokens ?? data?.usage?.prompt_tokens ?? 0),
+    outputTokens: Number(data?.usage?.output_tokens ?? data?.usage?.completion_tokens ?? 0)
+  });
   const rawText = data?.output_text || data?.output?.[0]?.content?.[0]?.text || "";
   const parsed = parseJsonPayload(rawText);
   if (!parsed || typeof parsed !== "object") {
@@ -517,8 +675,19 @@ ${buildCaseContext(relatedCases) || "Niet gevonden."}
 };
 
 export default async function handler(req, res) {
+  const ctx = createRequestContext({ request: req, route: "/api/document-upload" });
+  logRequestStart(ctx);
+  let loggedEnd = false;
+  const respond = async (status, payload, extra = {}) => {
+    if (!loggedEnd) {
+      await logRequestEnd(ctx, { status, extra });
+      loggedEnd = true;
+    }
+    res.status(status).json(payload);
+  };
+
   if (req.method === "GET") {
-    res.status(200).json({
+    await respond(200, {
       ok: true,
       route: "/api/document-upload",
       methods: ["POST"]
@@ -527,33 +696,40 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
+    await respond(405, { error: "Method not allowed" });
     return;
   }
 
   if (!OPENAI_API_KEY || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    res.status(500).json({ error: "Serverconfiguratie ontbreekt." });
+    await respond(500, { error: "Serverconfiguratie ontbreekt." });
     return;
   }
 
+  let file = null;
   try {
+    const auth = await requireAuthenticatedAccount(req.headers);
+    if (!auth.ok) {
+      await respond(auth.status, { error: auth.error }, { auth_error: true });
+      return;
+    }
+
     const files = await parseForm(req);
     const rawFile = files.file || Object.values(files)[0];
-    const file = Array.isArray(rawFile) ? rawFile[0] : rawFile;
+    file = Array.isArray(rawFile) ? rawFile[0] : rawFile;
 
     if (!file) {
-      res.status(400).json({ error: "Geen bestand ontvangen." });
+      await respond(400, { error: "Geen bestand ontvangen." });
       return;
     }
 
     if (!isAllowedFile(file)) {
-      res.status(400).json({ error: "Alleen PDF en DOCX documenten zijn toegestaan." });
+      await respond(400, { error: "Alleen PDF en DOCX documenten zijn toegestaan." });
       return;
     }
 
     const text = await extractTextFromFile(file);
     if (!text) {
-      res.status(400).json({
+      await respond(400, {
         error:
           "Geen leesbare tekst gevonden. Gebruik een tekst-PDF of een DOCX-bestand."
       });
@@ -563,7 +739,7 @@ export default async function handler(req, res) {
     const relatedCases = await getTopRelatedCases(text);
     const findings = await analyzeDocument({ documentText: text, relatedCases });
 
-    res.status(200).json({
+    await respond(200, {
       ok: true,
       file: {
         filename: path.basename(file.originalFilename || "document"),
@@ -581,13 +757,36 @@ export default async function handler(req, res) {
         content_excerpt: limitText(item.content, 1800)
       })),
       findings
-    });
+    }, { related_case_count: relatedCases.length, text_length: text.length });
   } catch (error) {
     console.error("Document upload route error:", error);
     if (error?.code === "PDF_PARSE_FAILED") {
-      res.status(400).json({ error: error.message });
+      await respond(400, { error: error.message });
       return;
     }
+    const message = String(error?.message || "").toLowerCase();
+    if (message.includes("supabase") || message.includes("pgrst") || message.includes("schema cache")) {
+      await logProviderError("supabase", {
+        route: ctx.route,
+        request_id: ctx.request_id,
+        error_message: String(error?.message || "")
+      });
+    } else {
+      await logProviderError("openai", {
+        route: ctx.route,
+        request_id: ctx.request_id,
+        error_message: String(error?.message || "")
+      });
+    }
+    await reportError({
+      ctx,
+      error,
+      status: 500,
+      tags: { component: "document_upload_api" }
+    });
+    loggedEnd = true;
     res.status(500).json({ error: "Document analyse mislukt. Probeer het opnieuw." });
+  } finally {
+    await cleanupTempFile(file);
   }
 }

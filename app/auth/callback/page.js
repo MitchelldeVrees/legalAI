@@ -13,6 +13,16 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const [message, setMessage] = useState("Je sessie wordt ingesteld...");
 
+  const reportAuthFailure = (reason) => {
+    fetch("/api/ops/auth-failure", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason })
+    }).catch(() => {
+      // Ignore telemetry failures in the auth UI.
+    });
+  };
+
   useEffect(() => {
     const handleAuth = async () => {
       if (typeof window === "undefined") {
@@ -22,6 +32,7 @@ export default function AuthCallbackPage() {
       const url = new URL(window.location.href);
       const errorDescription = url.searchParams.get("error_description");
       if (errorDescription) {
+        reportAuthFailure("error_description");
         setMessage("Inloggen mislukt. Probeer het opnieuw.");
         return;
       }
@@ -31,6 +42,7 @@ export default function AuthCallbackPage() {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) {
           console.error("Auth exchange error:", error);
+          reportAuthFailure("exchange_code_for_session_failed");
           setMessage("Inloggen mislukt. Probeer het opnieuw.");
           return;
         }
@@ -52,6 +64,7 @@ export default function AuthCallbackPage() {
 
         if (error) {
           console.error("Auth session error:", error);
+          reportAuthFailure("set_session_failed");
           setMessage("Inloggen mislukt. Probeer het opnieuw.");
           return;
         }
@@ -60,6 +73,7 @@ export default function AuthCallbackPage() {
         return;
       }
 
+      reportAuthFailure("missing_login_token");
       setMessage("Geen geldige login token gevonden. Probeer het opnieuw.");
     };
 

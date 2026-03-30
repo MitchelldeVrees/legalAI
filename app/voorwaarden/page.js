@@ -11,8 +11,8 @@ export default function VoorwaardenPage() {
           <p className="eyebrow">Voorwaarden</p>
           <h1>Algemene Voorwaarden - LegalAI (B2B)</h1>
           <div className="terms-meta">
-            <span>Versie: 1.0</span>
-            <span>Ingangsdatum: 19-01-2026</span>
+            <span>Versie: 1.1</span>
+            <span>Ingangsdatum: 30-03-2026</span>
           </div>
           <p className="lead">
             Deze algemene voorwaarden ("Voorwaarden") zijn van toepassing op
@@ -171,7 +171,9 @@ export default function VoorwaardenPage() {
               <p>
                 Voor zover LegalAI toch persoonsgegevens verwerkt, gebeurt dit
                 conform de privacyverklaring en (indien nodig) een
-                verwerkersovereenkomst. 
+                verwerkersovereenkomst (DPA). Op verzoek sluiten partijen een
+                DPA; zie <Link href="/dpa">/dpa</Link> voor de actuele
+                verwerkingskaders.
               </p>
             </li>
             <li>

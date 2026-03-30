@@ -2,6 +2,13 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import { gunzipSync } from "zlib";
+import {
+  createRequestContext,
+  logProviderError,
+  logRequestEnd,
+  logRequestStart,
+  reportError
+} from "../../../../lib/observability";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -11,9 +18,46 @@ const AZURE_STORAGE_CONNECTION_STRING =
   process.env.ZURE_STORAGE_CONNECTION_STRING ||
   "";
 const AZURE_ECLI_CONTAINER = process.env.AZURE_ECLI_CONTAINER || "jurisprudentie";
+const ECLI_CACHE_TTL_MS = Number(process.env.ECLI_CACHE_TTL_MS || 60 * 60 * 1000);
+const ECLI_CACHE_MAX_ENTRIES = Number(process.env.ECLI_CACHE_MAX_ENTRIES || 500);
+const ECLI_CACHE_MAX_XML_CHARS = Number(
+  process.env.ECLI_CACHE_MAX_XML_CHARS || 800000
+);
 
 const jsonError = (message, status) =>
   NextResponse.json({ error: message }, { status });
+
+const getEcliCache = () => {
+  if (!globalThis.__LEGALAI_ECLI_CACHE__) {
+    globalThis.__LEGALAI_ECLI_CACHE__ = new Map();
+  }
+  return globalThis.__LEGALAI_ECLI_CACHE__;
+};
+
+const readEcliCache = (key) => {
+  const cache = getEcliCache();
+  const entry = cache.get(key);
+  if (!entry) {
+    return null;
+  }
+  if (Date.now() - Number(entry.ts || 0) > ECLI_CACHE_TTL_MS) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.payload;
+};
+
+const writeEcliCache = (key, payload) => {
+  const cache = getEcliCache();
+  cache.set(key, { ts: Date.now(), payload });
+
+  if (cache.size > ECLI_CACHE_MAX_ENTRIES) {
+    const oldestKey = cache.keys().next().value;
+    if (oldestKey) {
+      cache.delete(oldestKey);
+    }
+  }
+};
 
 const parseAzureConnectionString = (value) => {
   const parts = String(value || "")
@@ -211,8 +255,19 @@ const extractUitspraakHtml = (xml) => {
 };
 
 export async function GET(_request, { params }) {
+  const ctx = createRequestContext({ request: _request, route: "/api/ecli/[ecli]" });
+  logRequestStart(ctx);
+  let loggedEnd = false;
+  const respond = async (status, payload) => {
+    if (!loggedEnd) {
+      await logRequestEnd(ctx, { status });
+      loggedEnd = true;
+    }
+    return NextResponse.json(payload, { status });
+  };
+
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    return jsonError("Server is not configured for search.", 500);
+    return await respond(500, { error: "Server is not configured for search." });
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -222,7 +277,16 @@ export async function GET(_request, { params }) {
   const rawEcli = params?.ecli ? decodeURIComponent(params.ecli) : "";
   const ecli = String(rawEcli || "").trim();
   if (!ecli) {
-    return jsonError("ECLI is required.", 400);
+    return await respond(400, { error: "ECLI is required." });
+  }
+  const cacheKey = ecli.toUpperCase();
+  const cached = readEcliCache(cacheKey);
+  if (cached) {
+    if (!loggedEnd) {
+      await logRequestEnd(ctx, { status: 200, extra: { cache_hit: true } });
+      loggedEnd = true;
+    }
+    return NextResponse.json(cached);
   }
 
   try {
@@ -234,11 +298,16 @@ export async function GET(_request, { params }) {
 
     if (error) {
       console.error("Supabase fetch error:", error);
-      return jsonError("Failed to load ECLI details.", 500);
+      await logProviderError("supabase", {
+        route: ctx.route,
+        request_id: ctx.request_id,
+        error_message: String(error?.message || "")
+      });
+      return await respond(500, { error: "Failed to load ECLI details." });
     }
 
     if (!data) {
-      return jsonError("ECLI not found.", 404);
+      return await respond(404, { error: "ECLI not found." });
     }
 
     const sourceLink = getSourceLinkFromRow(data);
@@ -258,11 +327,16 @@ export async function GET(_request, { params }) {
       const reason = sourceFetchError
         ? `Bronbestand niet opgehaald: ${sourceFetchError}`
         : "Geen XML gevonden in bronlink of database.";
-      return jsonError(reason, 502);
+      await logProviderError("other", {
+        route: ctx.route,
+        request_id: ctx.request_id,
+        error_message: reason
+      });
+      return await respond(502, { error: reason });
     }
     const uitspraakHtml = extractUitspraakHtml(sourceXml);
 
-    return NextResponse.json({
+    const responsePayload = {
       ecli,
       title: data.title || "",
       court: data.court || "",
@@ -274,9 +348,31 @@ export async function GET(_request, { params }) {
       uitspraak_html: uitspraakHtml,
       raw_xml: sourceXml,
       content: data.full_text ? [data.full_text] : []
-    });
+    };
+
+    if (sourceXml.length <= ECLI_CACHE_MAX_XML_CHARS) {
+      writeEcliCache(cacheKey, responsePayload);
+    }
+
+    if (!loggedEnd) {
+      await logRequestEnd(ctx, { status: 200 });
+      loggedEnd = true;
+    }
+    return NextResponse.json(responsePayload);
   } catch (error) {
     console.error("ECLI route error:", error);
-    return jsonError("Unexpected error while loading ECLI.", 500);
+    await logProviderError("other", {
+      route: ctx.route,
+      request_id: ctx.request_id,
+      error_message: String(error?.message || "")
+    });
+    await reportError({
+      ctx,
+      error,
+      status: 500,
+      tags: { component: "ecli_api" }
+    });
+    loggedEnd = true;
+    return NextResponse.json({ error: "Unexpected error while loading ECLI." }, { status: 500 });
   }
 }

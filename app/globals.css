@@ -665,6 +665,9 @@ label.cta {
 }
 
 .score-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   color: #8a3218;
   background: rgba(216, 91, 47, 0.12);
@@ -672,6 +675,14 @@ label.cta {
   border-radius: 999px;
   border: 1px solid rgba(216, 91, 47, 0.25);
   white-space: nowrap;
+}
+
+.result-rank-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
 }
 
 .result-snippet {
@@ -682,6 +693,50 @@ label.cta {
 
 .answer-output {
   gap: 10px;
+}
+
+.answer-sources {
+  display: grid;
+  gap: 8px;
+}
+
+.answer-sources-label {
+  margin: 0;
+  font-size: 12px;
+  color: #5a6570;
+}
+
+.answer-sources-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.answer-source-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(30, 42, 54, 0.2);
+  color: #1f2a33;
+  background: rgba(30, 42, 54, 0.06);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.answer-source-chip:hover {
+  background: rgba(30, 42, 54, 0.1);
+}
+
+.ai-disclaimer {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(30, 42, 54, 0.18);
+  background: rgba(30, 42, 54, 0.06);
+  color: #1f2a33;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .detail-card {

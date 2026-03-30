@@ -1,4 +1,11 @@
 import { NextResponse } from "next/server";
+import {
+  createRequestContext,
+  logProviderError,
+  logRequestEnd,
+  logRequestStart,
+  reportError
+} from "../../../lib/observability";
 
 const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -78,15 +85,23 @@ async function sendContactNotification(payload) {
 }
 
 export async function POST(request) {
+  const ctx = createRequestContext({ request, route: "/api/contact" });
+  logRequestStart(ctx);
+  let loggedEnd = false;
+  const respond = async (status, payload) => {
+    if (!loggedEnd) {
+      await logRequestEnd(ctx, { status });
+      loggedEnd = true;
+    }
+    return NextResponse.json(payload, { status });
+  };
+
   let body;
 
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: "Ongeldige aanvraag." },
-      { status: 400 }
-    );
+    return await respond(400, { error: "Ongeldige aanvraag." });
   }
 
   try {
@@ -98,14 +113,15 @@ export async function POST(request) {
     const website = asTrimmed(body?.website);
 
     if (website) {
+      if (!loggedEnd) {
+        await logRequestEnd(ctx, { status: 200, extra: { honeypot: true } });
+        loggedEnd = true;
+      }
       return NextResponse.json({ ok: true });
     }
 
     if (!fullName || !workEmail || !firmName || !role || !useCase) {
-      return NextResponse.json(
-        { error: "Vul alle verplichte velden in." },
-        { status: 400 }
-      );
+      return await respond(400, { error: "Vul alle verplichte velden in." });
     }
 
     if (
@@ -115,17 +131,11 @@ export async function POST(request) {
       role.length > 120 ||
       useCase.length > 2500
     ) {
-      return NextResponse.json(
-        { error: "Een of meer velden zijn te lang." },
-        { status: 400 }
-      );
+      return await respond(400, { error: "Een of meer velden zijn te lang." });
     }
 
     if (!isValidEmail(workEmail)) {
-      return NextResponse.json(
-        { error: "Gebruik een geldig e-mailadres." },
-        { status: 400 }
-      );
+      return await respond(400, { error: "Gebruik een geldig e-mailadres." });
     }
 
     const submittedAt = new Date().toISOString();
@@ -185,9 +195,25 @@ export async function POST(request) {
       html
     });
 
+    if (!loggedEnd) {
+      await logRequestEnd(ctx, { status: 200 });
+      loggedEnd = true;
+    }
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[contact-request-error]", error);
+    await logProviderError("supabase", {
+      route: ctx.route,
+      request_id: ctx.request_id,
+      error_message: String(error?.message || "")
+    });
+    await reportError({
+      ctx,
+      error,
+      status: 502,
+      tags: { component: "contact_api" }
+    });
+    loggedEnd = true;
     return NextResponse.json(
       { error: "Aanvraag ontvangen, maar afleveren via e-mail is mislukt." },
       { status: 502 }

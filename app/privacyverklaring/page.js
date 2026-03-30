@@ -11,8 +11,8 @@ export default function PrivacyverklaringPage() {
           <p className="eyebrow">Privacy</p>
           <h1>Privacyverklaring - LegalAI (B2B)</h1>
           <div className="terms-meta">
-            <span>Versie: 1.0</span>
-            <span>Datum: 19-01-2026</span>
+            <span>Versie: 1.1</span>
+            <span>Datum: 30-03-2026</span>
           </div>
           <p className="lead">
             Deze privacyverklaring legt uit hoe LegalAI persoonsgegevens verwerkt
@@ -43,8 +43,8 @@ export default function PrivacyverklaringPage() {
                 LegalAI verwerker.
               </p>
               <p>
-                Tip: als je een verwerkersovereenkomst (DPA) aanbiedt, zet
-                hier: "Op verzoek sluiten wij een verwerkersovereenkomst."
+                Op verzoek sluiten wij een verwerkersovereenkomst (DPA). Zie{" "}
+                <Link href="/dpa">DPA</Link> voor de actuele uitgangspunten.
               </p>
             </li>
             <li>
@@ -139,15 +139,15 @@ export default function PrivacyverklaringPage() {
               <p>Wij delen persoonsgegevens alleen wanneer nodig:</p>
               <ul>
                 <li>
-                  Hosting/infra providers (servers, database, monitoring) - als
-                  verwerker/subverwerker.
+                  OpenAI: model inference en embeddings voor AI-functionaliteit.
                 </li>
-                <li>Betaalprovider (voor betalingen en terugboekingen).</li>
-                <li>E-mail/Support tooling (als je ticketsysteem gebruikt).</li>
                 <li>
-                  Wettelijke verplichting (bijv. belastingdienst, gerechtelijke
-                  bevelen).
+                  Supabase: authenticatie, database en zoek-RPC (subverwerker).
                 </li>
+                <li>Hostingprovider: runtime en operationele logging.</li>
+                <li>Resend: contact/e-mailnotificaties.</li>
+                <li>Azure Blob Storage: bronbestanden jurisprudentie (indien gebruikt).</li>
+                <li>Wettelijke verplichting (bijv. gerechtelijk bevel).</li>
               </ul>
               <p>Wij verkopen geen persoonsgegevens.</p>
             </li>
@@ -168,14 +168,17 @@ export default function PrivacyverklaringPage() {
                 gegevens).
               </p>
               <p>
-                Technische logs: 90 dagen, tenzij langer nodig
-                voor security-incidenten of fraudeonderzoek.
+                Technische logs en foutregistraties: worden verwerkt in de
+                logging van onze infrastructuurproviders. Waar mogelijk
+                hanteren we maximaal 90 dagen, tenzij langer nodig voor
+                beveiligingsincidenten, fraudeonderzoek of wettelijke plicht.
               </p>
               <p>
-                Input/Output in de applicatie: niet bedoeld voor opslag.
-                Tijdelijke verwerking vindt plaats voor het leveren van Output;
-                structurele opslag vindt niet plaats behalve voor strikt
-                noodzakelijke technische logging.
+                Input/Output in de applicatie: niet bedoeld als dossieropslag.
+                Geuploade bestanden worden verwerkt voor analyse en tijdelijke
+                uploadbestanden worden na verwerking verwijderd waar technisch
+                mogelijk. Structurele inhoudsopslag vindt niet plaats, behalve
+                wanneer strikt nodig voor foutanalyse of beveiliging.
               </p>
             </li>
             <li>

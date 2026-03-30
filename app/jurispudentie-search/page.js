@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DashboardShell from "../components/DashboardShell";
 import { buildRechtspraakDetailUrl } from "../../lib/rechtspraak";
+import { buildAuthenticatedHeaders } from "../../lib/clientApiAuth";
 
 export default function JurispudentieSearchPage() {
   const [searchStatus, setSearchStatus] = useState({
@@ -16,6 +17,8 @@ export default function JurispudentieSearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [answer, setAnswer] = useState("");
+  const [answerSources, setAnswerSources] = useState([]);
+  const visibleResults = results.filter((result) => String(result?.ecli || "").trim());
 
   const handleSearch = async (event) => {
     event.preventDefault();
@@ -28,11 +31,15 @@ export default function JurispudentieSearchPage() {
     setSearchStatus({ loading: true, error: "" });
     setAnswerStatus({ loading: false, error: "" });
     setAnswer("");
+    setAnswerSources([]);
 
     try {
+      const headers = await buildAuthenticatedHeaders({
+        "Content-Type": "application/json"
+      });
       const response = await fetch("/api/search", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ query: trimmedQuery, k: 6 })
       });
 
@@ -55,18 +62,22 @@ export default function JurispudentieSearchPage() {
   };
 
   const handleGenerateAnswer = async () => {
-    if (!results.length) {
+    if (!visibleResults.length) {
       return;
     }
 
     setAnswerStatus({ loading: true, error: "" });
     setAnswer("");
+    setAnswerSources([]);
 
     try {
+      const headers = await buildAuthenticatedHeaders({
+        "Content-Type": "application/json"
+      });
       const response = await fetch("/api/answer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), results })
+        headers,
+        body: JSON.stringify({ query: query.trim(), results: visibleResults })
       });
 
       if (!response.ok) {
@@ -77,6 +88,7 @@ export default function JurispudentieSearchPage() {
 
       const data = await response.json();
       setAnswer(data?.answer || "");
+      setAnswerSources(Array.isArray(data?.answerSources) ? data.answerSources : []);
       setAnswerStatus({ loading: false, error: "" });
     } catch (error) {
       console.error("Answer request error:", error);
@@ -90,7 +102,7 @@ export default function JurispudentieSearchPage() {
   const getSnippet = (text) => {
     const snippet = String(text || "").trim();
     if (!snippet) {
-      return "Geen snippet beschikbaar.";
+      return "";
     }
     return snippet.length > 240 ? `${snippet.slice(0, 240)}...` : snippet;
   };
@@ -100,7 +112,6 @@ export default function JurispudentieSearchPage() {
       title="Jurisprudentie search"
       sidebarItems={[
         { label: "Contract reader", href: "/dashboard" },
-        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", active: true },
         { label: "Vraag stellen", href: "/vraag-stellen" }
       ]}
@@ -145,7 +156,7 @@ export default function JurispudentieSearchPage() {
 
       <div className="form-card results-card">
         <p className="eyebrow">Resultaten</p>
-        {results.length ? (
+        {visibleResults.length ? (
           <>
             <div className="results-actions">
               <button
@@ -160,7 +171,7 @@ export default function JurispudentieSearchPage() {
               </button>
             </div>
             <div className="results-list">
-              {results.map((result, index) => {
+              {visibleResults.map((result, index) => {
                 const ecliValue = result.ecli || "";
                 const ecliHref = buildRechtspraakDetailUrl(ecliValue);
                 return (
@@ -176,22 +187,19 @@ export default function JurispudentieSearchPage() {
                           >
                             <strong>{result.ecli}</strong>
                           </a>
-                        ) : (
-                          <strong>Onbekende ECLI</strong>
-                        )}
-                        <p className="result-meta">
-                          {result.title || "Onbekende uitspraak"}
-                        </p>
+                        ) : null}
+                        {result.title ? (
+                          <p className="result-meta">{result.title}</p>
+                        ) : null}
                       </div>
                       <span className="score-chip">
-                        {typeof result.score === "number"
-                          ? result.score.toFixed(3)
-                          : "n.v.t."}
+                        <span className="result-rank-icon" aria-hidden="true" />
+                        {`Resultaat ${index + 1}`}
                       </span>
                     </div>
-                    <p className="result-snippet">
-                      {getSnippet(result.content)}
-                    </p>
+                    {getSnippet(result.content) ? (
+                      <p className="result-snippet">{getSnippet(result.content)}</p>
+                    ) : null}
                   </div>
                 );
               })}
@@ -208,7 +216,36 @@ export default function JurispudentieSearchPage() {
         {answer ? (
           <div className="analysis-output answer-output">
             <p className="eyebrow">Antwoord</p>
+            <p className="ai-disclaimer">
+              Dit antwoord is een hulpmiddel en geen juridisch advies. Juridische
+              beoordeling door een advocaat blijft noodzakelijk.
+            </p>
             <p>{answer}</p>
+            {answerSources.length ? (
+              <div className="answer-sources">
+                <p className="answer-sources-label">Bronnen bij dit antwoord:</p>
+                <div className="answer-sources-list">
+                  {answerSources.map((source, index) => {
+                    const ecli = String(source?.ecli || "").trim();
+                    const href = buildRechtspraakDetailUrl(ecli);
+                    if (!ecli || !href) {
+                      return null;
+                    }
+                    return (
+                      <a
+                        key={`${ecli}-${index}`}
+                        className="answer-source-chip"
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {ecli}
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

@@ -64,7 +64,6 @@ export default function JurispudentieDetailPage() {
       title="Jurisprudentie detail"
       sidebarItems={[
         { label: "Contract reader", href: "/dashboard" },
-        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", href: "/jurispudentie-search" },
         { label: "Vraag stellen", href: "/vraag-stellen" }
       ]}

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardShell from "../components/DashboardShell";
 import { buildRechtspraakDetailUrl } from "../../lib/rechtspraak";
+import { buildAuthenticatedHeaders } from "../../lib/clientApiAuth";
 
 const allowedExtensions = [".pdf", ".docx"];
 const allowedMimeTypes = new Set([
@@ -317,15 +318,18 @@ export default function DocumentUploadPage() {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
+      const headers = await buildAuthenticatedHeaders();
 
       const response = await fetch("/api/document-upload", {
         method: "POST",
+        headers,
         body: formData
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        let errorMessage = "Upload failed.";
+        let errorMessage =
+          "Document uploaden lukt nu niet. Probeer het over enkele seconden opnieuw.";
         const looksLikeHtml =
           String(errorText || "")
             .trim()
@@ -335,19 +339,30 @@ export default function DocumentUploadPage() {
         if (response.status === 404) {
           errorMessage =
             "API endpoint /api/document-upload bestaat niet op de actieve server. Herstart de Next.js dev server.";
+        } else if (response.status === 400) {
+          errorMessage = "Controleer het bestandstype en probeer opnieuw.";
+        } else if (response.status === 413) {
+          errorMessage = "Het bestand is te groot. Upload een kleiner document.";
+        } else if (response.status === 429) {
+          errorMessage = "Te veel verzoeken. Wacht even en probeer opnieuw.";
+        } else if (response.status >= 500) {
+          errorMessage =
+            "De analyse is tijdelijk niet beschikbaar. Probeer het over enkele seconden opnieuw.";
         } else if (looksLikeHtml) {
-          errorMessage = `Serverfout (${response.status}). Controleer de serverlogs.`;
+          errorMessage =
+            "De server gaf een onverwachte reactie. Probeer het opnieuw.";
         }
 
         try {
           const parsedError = looksLikeHtml ? null : JSON.parse(errorText);
           if (!errorMessage.includes("/api/document-upload") && parsedError?.error) {
-            errorMessage = parsedError.error;
+            const apiError = String(parsedError.error || "").trim();
+            if (apiError) {
+              errorMessage = apiError;
+            }
           }
         } catch {
-          if (!looksLikeHtml) {
-            errorMessage = errorText || errorMessage;
-          }
+          // Intentionally ignored to avoid showing raw backend payloads to end users.
         }
 
         console.error("Document upload failed:", response.status, errorText);
@@ -442,7 +457,6 @@ export default function DocumentUploadPage() {
       title="Documenten uploaden"
       sidebarItems={[
         { label: "Contract reader", href: "/dashboard" },
-        { label: "Documenten uploaden", active: true },
         { label: "Jurispudentie search", href: "/jurispudentie-search" },
         { label: "Vraag stellen", href: "/vraag-stellen" }
       ]}
@@ -486,6 +500,10 @@ export default function DocumentUploadPage() {
         <>
           <div className="form-card results-card">
             <p className="eyebrow">Dossier analyse</p>
+            <p className="ai-disclaimer">
+              Deze analyse is ondersteunend en geen juridisch advies. Laat de
+              uitkomst altijd beoordelen door een advocaat.
+            </p>
             {findings.zaak_samenvatting || findings.summary ? (
               <div className="analysis-output answer-output">
                 <p>{findings.zaak_samenvatting || findings.summary}</p>

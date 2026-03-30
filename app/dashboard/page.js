@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Markdown from "markdown-to-jsx";
 import DashboardShell from "../components/DashboardShell";
+import { buildAuthenticatedHeaders } from "../../lib/clientApiAuth";
 
 export default function DashboardHome() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -31,8 +32,10 @@ export default function DashboardHome() {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
+      const headers = await buildAuthenticatedHeaders();
       const response = await fetch("/api/analyze", {
         method: "POST",
+        headers,
         body: formData
       });
 
@@ -59,7 +62,6 @@ export default function DashboardHome() {
       title="Welkom terug"
       sidebarItems={[
         { label: "Contract reader", active: true },
-        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", href: "/jurispudentie-search" },
         { label: "Vraag stellen", href: "/vraag-stellen" }
       ]}
@@ -94,6 +96,10 @@ export default function DashboardHome() {
       {analysis ? (
         <div className="form-card analysis-card">
           <p className="eyebrow">Analyse</p>
+          <p className="ai-disclaimer">
+            Deze output is ondersteunend en geen juridisch advies. Laat een advocaat
+            altijd inhoudelijk controleren voordat je handelt.
+          </p>
           <div className="analysis-output">
             <Markdown>{analysis}</Markdown>
           </div>

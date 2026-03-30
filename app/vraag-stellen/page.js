@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DashboardShell from "../components/DashboardShell";
 import { buildRechtspraakDetailUrl } from "../../lib/rechtspraak";
+import { buildAuthenticatedHeaders } from "../../lib/clientApiAuth";
 
 export default function VraagStellenPage() {
   const [question, setQuestion] = useState("");
@@ -16,6 +17,8 @@ export default function VraagStellenPage() {
   });
   const [results, setResults] = useState([]);
   const [answer, setAnswer] = useState("");
+  const [answerSources, setAnswerSources] = useState([]);
+  const visibleResults = results.filter((result) => String(result?.ecli || "").trim());
 
   const handleAsk = async (event) => {
     event.preventDefault();
@@ -28,12 +31,16 @@ export default function VraagStellenPage() {
     setSearchStatus({ loading: true, error: "" });
     setAnswerStatus({ loading: false, error: "" });
     setAnswer("");
+    setAnswerSources([]);
     setResults([]);
 
     try {
+      const searchHeaders = await buildAuthenticatedHeaders({
+        "Content-Type": "application/json"
+      });
       const response = await fetch("/api/search", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: searchHeaders,
         body: JSON.stringify({ query: trimmedQuestion, k: 40 })
       });
 
@@ -48,15 +55,22 @@ export default function VraagStellenPage() {
       setResults(nextResults);
       setSearchStatus({ loading: false, error: "" });
 
-      if (!nextResults.length) {
+      const ecliResults = nextResults.filter((item) =>
+        String(item?.ecli || "").trim()
+      );
+
+      if (!ecliResults.length) {
         return;
       }
 
       setAnswerStatus({ loading: true, error: "" });
+      const answerHeaders = await buildAuthenticatedHeaders({
+        "Content-Type": "application/json"
+      });
       const answerResponse = await fetch("/api/answer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: trimmedQuestion, results: nextResults })
+        headers: answerHeaders,
+        body: JSON.stringify({ query: trimmedQuestion, results: ecliResults })
       });
 
       if (!answerResponse.ok) {
@@ -67,6 +81,9 @@ export default function VraagStellenPage() {
 
       const answerData = await answerResponse.json();
       setAnswer(answerData?.answer || "");
+      setAnswerSources(
+        Array.isArray(answerData?.answerSources) ? answerData.answerSources : []
+      );
       setAnswerStatus({ loading: false, error: "" });
     } catch (error) {
       console.error("Vraag stellen error:", error);
@@ -81,7 +98,7 @@ export default function VraagStellenPage() {
   const getSnippet = (text) => {
     const snippet = String(text || "").trim();
     if (!snippet) {
-      return "Geen snippet beschikbaar.";
+      return "";
     }
     return snippet.length > 240 ? `${snippet.slice(0, 240)}...` : snippet;
   };
@@ -91,7 +108,6 @@ export default function VraagStellenPage() {
       title="Vraag stellen"
       sidebarItems={[
         { label: "Contract reader", href: "/dashboard" },
-        { label: "Documenten uploaden", href: "/document-upload" },
         { label: "Jurispudentie search", href: "/jurispudentie-search" },
         { label: "Vraag stellen", active: true }
       ]}
@@ -141,7 +157,36 @@ export default function VraagStellenPage() {
           <p className="search-note">Antwoord genereren...</p>
         ) : answer ? (
           <div className="analysis-output answer-output">
+            <p className="ai-disclaimer">
+              Dit antwoord is ondersteunend en geen juridisch advies. Laat de
+              uitkomst altijd juridisch toetsen door een advocaat.
+            </p>
             <p>{answer}</p>
+            {answerSources.length ? (
+              <div className="answer-sources">
+                <p className="answer-sources-label">Bronnen bij dit antwoord:</p>
+                <div className="answer-sources-list">
+                  {answerSources.map((source, index) => {
+                    const ecli = String(source?.ecli || "").trim();
+                    const href = buildRechtspraakDetailUrl(ecli);
+                    if (!ecli || !href) {
+                      return null;
+                    }
+                    return (
+                      <a
+                        key={`${ecli}-${index}`}
+                        className="answer-source-chip"
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {ecli}
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : (
           <p className="search-note">Nog geen antwoord. Stel een vraag.</p>
@@ -153,9 +198,9 @@ export default function VraagStellenPage() {
 
       <div className="form-card results-card">
         <p className="eyebrow">Onderbouwing</p>
-        {results.length ? (
+        {visibleResults.length ? (
           <div className="results-list">
-            {results.map((result, index) => {
+            {visibleResults.map((result, index) => {
               const ecliValue = result.ecli || "";
               const ecliHref = buildRechtspraakDetailUrl(ecliValue);
               return (
@@ -171,20 +216,19 @@ export default function VraagStellenPage() {
                         >
                           <strong>{result.ecli}</strong>
                         </a>
-                      ) : (
-                        <strong>Onbekende ECLI</strong>
-                      )}
-                      <p className="result-meta">
-                        {result.title || "Onbekende uitspraak"}
-                      </p>
+                      ) : null}
+                      {result.title ? (
+                        <p className="result-meta">{result.title}</p>
+                      ) : null}
                     </div>
                     <span className="score-chip">
-                      {typeof result.score === "number"
-                        ? result.score.toFixed(3)
-                        : "n.v.t."}
+                      <span className="result-rank-icon" aria-hidden="true" />
+                      {`Resultaat ${index + 1}`}
                     </span>
                   </div>
-                  <p className="result-snippet">{getSnippet(result.content)}</p>
+                  {getSnippet(result.content) ? (
+                    <p className="result-snippet">{getSnippet(result.content)}</p>
+                  ) : null}
                 </div>
               );
             })}
