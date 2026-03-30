@@ -12,6 +12,9 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const SUPABASE_CONTACT_FUNCTION_NAME =
   process.env.SUPABASE_CONTACT_FUNCTION_NAME || "contact-notify";
 const CONTACT_INTERNAL_SECRET = process.env.CONTACT_INTERNAL_SECRET || "";
+const CONTACT_RECIPIENT_EMAIL = process.env.CONTACT_RECIPIENT_EMAIL || "";
+const CONTACT_FROM_EMAIL =
+  process.env.CONTACT_FROM_EMAIL || "LegalAI <onboarding@resend.dev>";
 
 function asTrimmed(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -146,13 +149,48 @@ export async function POST(request) {
       submittedAt
     });
 
+    const subject = `Nieuwe contactaanvraag van ${fullName}`;
+    const text = [
+      "Nieuwe contactaanvraag ontvangen:",
+      `Naam: ${fullName}`,
+      `E-mail: ${workEmail}`,
+      `Kantoor: ${firmName}`,
+      `Functie: ${role}`,
+      `Ingediend op: ${submittedAt}`,
+      "",
+      "Hulpvraag:",
+      useCase
+    ].join("\n");
+    const html = [
+      "<h2>Nieuwe contactaanvraag</h2>",
+      `<p><strong>Naam:</strong> ${fullName}</p>`,
+      `<p><strong>E-mail:</strong> ${workEmail}</p>`,
+      `<p><strong>Kantoor:</strong> ${firmName}</p>`,
+      `<p><strong>Functie:</strong> ${role}</p>`,
+      `<p><strong>Ingediend op:</strong> ${submittedAt}</p>`,
+      "<h3>Hulpvraag</h3>",
+      `<p>${useCase.replaceAll("\n", "<br />")}</p>`
+    ].join("");
+
+    const legacyMailFields = CONTACT_RECIPIENT_EMAIL
+      ? {
+          to: [CONTACT_RECIPIENT_EMAIL],
+          from: CONTACT_FROM_EMAIL,
+          reply_to: workEmail,
+          subject,
+          text,
+          html
+        }
+      : {};
+
     await sendContactNotification({
       fullName,
       workEmail,
       firmName,
       role,
       useCase,
-      submittedAt
+      submittedAt,
+      ...legacyMailFields
     });
 
     if (!loggedEnd) {
@@ -162,10 +200,15 @@ export async function POST(request) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[contact-request-error]", error);
+    const rawMessage = String(error?.message || "");
+    const isMissingRecipientConfig =
+      rawMessage.includes("Missing `to` field") ||
+      rawMessage.includes("CONTACT_RECIPIENT_EMAIL");
+
     await logProviderError("supabase", {
       route: ctx.route,
       request_id: ctx.request_id,
-      error_message: String(error?.message || "")
+      error_message: rawMessage
     });
     await reportError({
       ctx,
@@ -174,9 +217,10 @@ export async function POST(request) {
       tags: { component: "contact_api" }
     });
     loggedEnd = true;
-    return NextResponse.json(
-      { error: "Aanvraag ontvangen, maar afleveren via e-mail is mislukt." },
-      { status: 502 }
-    );
+    return NextResponse.json({
+      error: isMissingRecipientConfig
+        ? "Contact is nog niet volledig geconfigureerd (ontvanger e-mail ontbreekt)."
+        : "Aanvraag ontvangen, maar afleveren via e-mail is mislukt."
+    }, { status: 502 });
   }
 }
