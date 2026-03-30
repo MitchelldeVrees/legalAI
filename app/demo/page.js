@@ -30,8 +30,8 @@ export default function DemoPage() {
         <p className="eyebrow">Demo-bestand</p>
         <h2>{demoScenario.contractTitle}</h2>
         <p className="lead">
-          Voorbeeldbestand staat klaar. Upload en vrije invoer zijn uitgeschakeld
-          in deze demo.
+          Zaakwijzer demo proberen: AI jurisprudentie demo gratis, contractanalyse
+          proberen en juridisch AI tool testen in een vaste voorbeeldworkflow.
         </p>
         <div className="dashboard-actions">
           <button className="cta" type="button" onClick={handleDemoAnalyze}>

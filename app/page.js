@@ -110,13 +110,14 @@ export default function Home() {
         <div className="zw-hero-left">
           <p className="zw-hero-eyebrow">AI voor advocatenkantoren</p>
           <h1 className="zw-hero-title">
-            Jurisprudentie<br />
-            in <em>seconden,</em><br />
-            niet uren.
+            AI juridisch onderzoek<br />
+            <em>advocatenkantoor</em><br />
+            Nederland.
           </h1>
           <p className="zw-hero-sub">
-            Zaakwijzer geeft juridische teams directe toegang tot relevante ECLI-bronnen, contractanalyse en
-            duidelijke antwoorden met onderbouwing. Meer tijd voor cliënten, minder tijd in zoekwerk.
+            Zaakwijzer is een juridische research tool waarmee je jurisprudentie zoeken AI inzet, ECLI
+            automatisch opzoeken versnelt en werkt met advocaat software Nederland voor contractanalyse en
+            dossieronderzoek.
           </p>
           <div className="zw-hero-actions">
             <Link

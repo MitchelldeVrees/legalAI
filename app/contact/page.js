@@ -102,12 +102,12 @@ export default function ContactPage() {
           <p className="eyebrow">{intent === "contact" ? "Contact" : "Plan demo"}</p>
           <h1>
             {intent === "contact"
-              ? "Neem contact op over Zaakwijzer voor je kantoor"
-              : "Plan een demo voor jouw advocatenkantoor"}
+              ? "Zaakwijzer contact"
+              : "AI advocaat tool demo aanvragen"}
           </h1>
           <p className="lead">
-            Laat weten waar je team op vastloopt. We laten in een korte sessie zien
-            hoe Zaakwijzer kan helpen in jullie dagelijkse praktijk.
+            Korte juridische software demonstratie voor je team, ook als klein
+            advocatenkantoor AI demo.
           </p>
         </div>
 

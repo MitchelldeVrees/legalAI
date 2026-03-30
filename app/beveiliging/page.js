@@ -9,10 +9,10 @@ export default function BeveiligingPage() {
       <section className="form-card">
         <div className="form-header">
           <p className="eyebrow">Beveiliging</p>
-          <h1>Veiligheid en privacy</h1>
+          <h1>veilige juridische AI software Nederland</h1>
           <p className="lead">
-            We behandelen documenten met zorg, gebruiken strikte
-            toegangscontrole en volgen best practices voor data bescherming.
+            AVG compliant advocaat tool met data beveiliging advocatenkantoor,
+            vertrouwelijk juridisch AI en servers Nederland juridisch.
           </p>
         </div>
         <div className="signup-form">
