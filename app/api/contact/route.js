@@ -12,9 +12,6 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const SUPABASE_CONTACT_FUNCTION_NAME =
   process.env.SUPABASE_CONTACT_FUNCTION_NAME || "contact-notify";
 const CONTACT_INTERNAL_SECRET = process.env.CONTACT_INTERNAL_SECRET || "";
-const CONTACT_RECIPIENT_EMAIL = process.env.CONTACT_RECIPIENT_EMAIL || "";
-const CONTACT_FROM_EMAIL =
-  process.env.CONTACT_FROM_EMAIL || "LegalAI <onboarding@resend.dev>";
 
 function asTrimmed(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -149,50 +146,13 @@ export async function POST(request) {
       submittedAt
     });
 
-    const subject = `Nieuwe contactaanvraag van ${fullName}`;
-    const text = [
-      "Nieuwe contactaanvraag ontvangen:",
-      `Naam: ${fullName}`,
-      `E-mail: ${workEmail}`,
-      `Kantoor: ${firmName}`,
-      `Functie: ${role}`,
-      `Ingediend op: ${submittedAt}`,
-      "",
-      "Hulpvraag:",
-      useCase
-    ].join("\n");
-    const html = [
-      "<h2>Nieuwe contactaanvraag</h2>",
-      `<p><strong>Naam:</strong> ${fullName}</p>`,
-      `<p><strong>E-mail:</strong> ${workEmail}</p>`,
-      `<p><strong>Kantoor:</strong> ${firmName}</p>`,
-      `<p><strong>Functie:</strong> ${role}</p>`,
-      `<p><strong>Ingediend op:</strong> ${submittedAt}</p>`,
-      "<h3>Hulpvraag</h3>",
-      `<p>${useCase.replaceAll("\n", "<br />")}</p>`
-    ].join("");
-
-    const toRecipients = CONTACT_RECIPIENT_EMAIL
-      ? [CONTACT_RECIPIENT_EMAIL]
-      : [];
-
-    if (!toRecipients.length) {
-      throw new Error("CONTACT_RECIPIENT_EMAIL ontbreekt in de app-omgeving.");
-    }
-
     await sendContactNotification({
       fullName,
       workEmail,
       firmName,
       role,
       useCase,
-      submittedAt,
-      to: toRecipients,
-      from: CONTACT_FROM_EMAIL,
-      reply_to: workEmail,
-      subject,
-      text,
-      html
+      submittedAt
     });
 
     if (!loggedEnd) {
